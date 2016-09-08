@@ -11,11 +11,13 @@ namespace straat.View
     {
         public Vector2 position;
         public float zoomFaktor;
+		Rectangle viewport;
 
-        public Camera()
+		public Camera(Rectangle viewport)
         {
             position = Vector2.Zero;
             zoomFaktor = 1.0f;
+			this.viewport = viewport;
         }
     }
 }

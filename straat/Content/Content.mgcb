@@ -13,9 +13,3 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin testfont.spritefont
-/importer:FontDescriptionImporter
-/processor:FontDescriptionProcessor
-/processorParam:TextureFormat=Compressed
-/build:testfont.spritefont
-

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace straat.Control
 {
-    enum InputCommand
+    public enum InputCommand
     {
         EXIT,
         DOWN,
@@ -15,9 +15,13 @@ namespace straat.Control
         LEFT,
         RIGHT,
         SELECT,
+		A,
+
+		S,
+
     }
 
-    class Input
+    public class Input
     {
         public HashSet<InputCommand> commands { get; private set; }
 
@@ -51,6 +55,9 @@ namespace straat.Control
 
             if (kbstate.IsKeyDown(Keys.Right))
                 commands.Add(InputCommand.RIGHT);
+
+			if( kbstate.IsKeyDown( Keys.Enter ) )
+				commands.Add( InputCommand.SELECT );
 
             previousKBState = kbstate;
         }

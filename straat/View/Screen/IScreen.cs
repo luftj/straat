@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 
 namespace straat.View.Screen
 {
-    interface IScreen
+    public interface IScreen
     {
+		void Initialize();
+		void LoadContent();
+		void UnloadContent();
+
         void Update(double deltaT, Input input);
 
         void Draw(double deltaT);

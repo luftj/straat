@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using straat.Control;
@@ -13,11 +15,11 @@ namespace straat
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+		public SpriteBatch spriteBatch { get; private set;}
 
         Input InputHandler;
 
-        ScreenManager ScreenManager;
+        ScreenManager screenManager;
 
         SpriteFont font;
 
@@ -37,7 +39,8 @@ namespace straat
         {
             // TODO: Add your initialization logic here
             InputHandler = new Input();
-            ScreenManager = new ScreenManager();
+			screenManager = new ScreenManager(this, graphics.GraphicsDevice.Viewport.Bounds);
+			screenManager.activateScreen(new MainMenuScreen(screenManager,screenManager.maxBounds));
 
             base.Initialize();
         }
@@ -74,11 +77,13 @@ namespace straat
             InputHandler.Update();
             
 
-            ScreenManager.Update(gameTime.ElapsedGameTime.TotalMilliseconds, InputHandler);
+            screenManager.Update(gameTime.ElapsedGameTime.TotalMilliseconds, InputHandler);
 
 
             if (InputHandler.pop(InputCommand.EXIT))
                 Exit();
+
+
 
 
             base.Update(gameTime);
@@ -94,7 +99,10 @@ namespace straat
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            spriteBatch.DrawString(font, "test", Vector2.Zero, Color.White);
+            //spriteBatch.DrawString(font, "test", Vector2.Zero, Color.White);
+
+			screenManager.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
