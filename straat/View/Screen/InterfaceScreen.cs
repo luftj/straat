@@ -9,8 +9,9 @@ namespace straat.View.Screen
 	public class InterfaceScreen : IScreen
 	{
 		protected ScreenManager screenManager;
-		protected Rectangle bounds;
+		protected Viewport viewport;
 		protected Dictionary<InputCommand,InterfaceScreen> links;
+
 
 		#region content
 		protected SpriteFont font;
@@ -19,27 +20,29 @@ namespace straat.View.Screen
 		public InterfaceScreen(ScreenManager screenManager, Rectangle bounds)
 		{
 			this.screenManager = screenManager;
-			this.bounds = bounds;
+			viewport = new Viewport( bounds );
+
 			links = new Dictionary<InputCommand, InterfaceScreen>();
+
 		}
 
-		public void Initialize()
+		public virtual void Initialize()
 		{
-			
+			// use this to initialise stuff
 		}
 
-		public void LoadContent()
+		public virtual void LoadContent()
 		{
 			// load content required for all interface screens
 			font = screenManager.game.Content.Load<SpriteFont>("testfont");
 		}
 
-		public void UnloadContent()
+		public virtual void UnloadContent()
 		{
 			//
 		}
 
-		public void Update(double deltaT, Input input)
+		public virtual void Update(double deltaT, Input input)
 		{
 			// handle hotkeys for navigatiom
 			bool screenChange = false;
@@ -59,7 +62,7 @@ namespace straat.View.Screen
 			}
 		}
 
-		public void Draw(double deltaT)
+		public virtual void Draw(double deltaT)
 		{
 			// todo: draw background
 			// todo: draw border

@@ -50,6 +50,20 @@
     <Compile Include="View\Screen\InterfaceScreen.cs" />
     <Compile Include="View\Screen\MainInterfaceScreen.cs" />
     <Compile Include="View\Screen\SquadInterfaceScreen.cs" />
+    <Compile Include="View\Drawing\GeometryDrawer.cs" />
+    <Compile Include="Geometry\Line.cs" />
+    <Compile Include="Geometry\Path.cs" />
+    <Compile Include="Geometry\Point.cs" />
+    <Compile Include="Geometry\Polygon.cs" />
+    <Compile Include="Geometry\Rectangle.cs" />
+    <Compile Include="Control\WorldObject.cs" />
+    <Compile Include="Control\Picker.cs" />
+    <Compile Include="Model\Map\Street.cs" />
+    <Compile Include="Model\Map\Settlement.cs" />
+    <Compile Include="Model\Map\MapNode.cs" />
+    <Compile Include="Model\Map\Crossing.cs" />
+    <Compile Include="Model\Map\Region.cs" />
+    <Compile Include="Control\SelectableComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -83,4 +97,7 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <ItemGroup>
+    <Folder Include="Model\Map\" />
+  </ItemGroup>
 </Project>

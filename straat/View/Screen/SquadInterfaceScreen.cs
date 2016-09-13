@@ -2,6 +2,7 @@
 using straat.View.Screen;
 using Microsoft.Xna.Framework;
 using straat.Control;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace straat
 {
@@ -9,21 +10,38 @@ namespace straat
 	{
 		public SquadInterfaceScreen(ScreenManager sm, Rectangle b) : base(sm,b)
 		{
-			// return to main interface screen
-			links.Add( InputCommand.EXIT, new MainInterfaceScreen( sm, b ) );
 		}
 
-		public new void Update(double deltaT, Input input)
+		public override void Initialize()
+		{
+			// return to main interface screen
+			links.Add( InputCommand.EXIT, new MainInterfaceScreen( screenManager, viewport.Bounds ) );
+		}
+
+		public override void Update(double deltaT, Input input)
 		{
 			base.Update( deltaT, input );
 		}
 
-		public new void Draw(double deltaT)
+		public override void Draw(double deltaT)
 		{
-			// todo: draw content
-			screenManager.game.spriteBatch.DrawString(font,"Return",new Vector2(10,50),Color.White);
+			// save previous viewport
+			Viewport original = screenManager.game.graphics.GraphicsDevice.Viewport;
+			screenManager.game.graphics.GraphicsDevice.Viewport = viewport;
+			screenManager.game.spriteBatch.Begin();
 
-			base.Draw(deltaT);
+			// set initial drawing position within bounds
+			Vector2 drawPos = new Vector2( 10, 10 );
+
+			// todo: draw content
+			screenManager.game.spriteBatch.DrawString( font, "Return", drawPos, Color.White );
+
+			base.Draw( deltaT );
+
+
+			screenManager.game.spriteBatch.End();
+			// switch back to standard viewport
+			screenManager.game.graphics.GraphicsDevice.Viewport = original;
 		}
 	}
 }

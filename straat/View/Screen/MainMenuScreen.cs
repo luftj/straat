@@ -12,7 +12,7 @@ namespace straat.View.Screen
     class MainMenuScreen : IScreen
     {
         ScreenManager screenManager;
-		Rectangle bounds;
+		Viewport viewport;
 
         List<string> entries;
         int selectedEntry = 0;
@@ -23,17 +23,21 @@ namespace straat.View.Screen
 
 		public MainMenuScreen(ScreenManager screenManager, Rectangle bounds)
         {
-            this.screenManager = screenManager;
-			this.bounds = bounds;
+			this.screenManager = screenManager;
+			viewport = new Viewport( bounds );
 
 			entries = new List<string>();
-			entries.Add("Start Game");
-			entries.Add("Exit");
         }
 
 		public void Initialize()
 		{
-			//
+			// initialise anything non-content
+			entries.Add("Start Game");
+			entries.Add("Load Game");
+			entries.Add("Multiplayer");
+			entries.Add("Settings");
+			entries.Add("Exit");
+
 		}
 
 		public void LoadContent()
@@ -41,26 +45,43 @@ namespace straat.View.Screen
 			font = screenManager.game.Content.Load<SpriteFont>("testfont");
 		}
 
+		/// <summary>
+		/// unloads all content files, that are not handled by content manager (music, ...?)
+		/// </summary>
 		public void UnloadContent()
 		{
-			//
+			// 
 		}
 
         public void Draw(double deltaT)
-        {
+		{
+			// save previous viewport
+			Viewport original = screenManager.game.graphics.GraphicsDevice.Viewport;
+			screenManager.game.graphics.GraphicsDevice.Viewport = viewport;
+			screenManager.game.spriteBatch.Begin();
+
+
+			// set initial drawing position within bounds
+			Vector2 drawPos = Vector2.Zero;
+			drawPos.Y += 20;
+
 			// draw entries
 			Color color;
-			Vector2 pos = new Vector2((float)(bounds.Width/2.0 + bounds.Left), (float)bounds.Top );
-			for(int i=0;i<entries.Count();++i)
+			for( int i = 0; i < entries.Count(); ++i )
 			{
 				if( i == selectedEntry )
 					color = Color.Red;
 				else
 					color = Color.White;
-				screenManager.game.spriteBatch.DrawString(font,entries[i],pos,color);
+				screenManager.game.spriteBatch.DrawString( font, entries[i], drawPos, color );
 
-				pos.Y += 20;
+				drawPos.Y += 20;
 			}
+
+
+			screenManager.game.spriteBatch.End();
+			// switch back to standard viewport
+			screenManager.game.graphics.GraphicsDevice.Viewport = original;
 		}
 
         //public void Enter()
@@ -88,7 +109,15 @@ namespace straat.View.Screen
 				switch( selectedEntry )
 				{
 				case 0:
-					screenManager.activateScreen( new GameScreen( screenManager, bounds ) );
+					// split screen vertically in two halves
+					Rectangle a = viewport.Bounds;
+					a.Width /= 2;
+					Rectangle b = a;
+					b.X += a.Width;
+
+					// goto main game setup
+					screenManager.activateScreen( new GameScreen( screenManager, a ) );
+					screenManager.activateScreen( new MainInterfaceScreen( screenManager, b ) );
 					screenManager.deactivateScreen( this );
 					break;
 				case 1:

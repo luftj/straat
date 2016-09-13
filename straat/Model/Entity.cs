@@ -11,12 +11,19 @@ namespace straat.Model
     class Entity
     {
         public GraphicsComponent gc { get; private set; }
+		public SelectableComponent sc { get; }
 
-        Vector2 worldPos;
+		public Vector2 worldPos {get;}
+
+		public int id { get; private set;}
+		private static int idCounter = 0;
         
         public Entity()
         {
             worldPos = Vector2.Zero;
+
+			id = idCounter;
+			++idCounter;
         } 
     }
 }

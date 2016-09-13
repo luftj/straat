@@ -8,17 +8,12 @@ using Microsoft.Xna.Framework;
 
 namespace straat.View.Drawing
 {
-    class GraphicsComponent : Microsoft.Xna.Framework.DrawableGameComponent
+    class GraphicsComponent
     {
-        Texture2D texture;
+		public Texture2D texture { get; }
 
-        public GraphicsComponent(Game game) : base(game)
+		public GraphicsComponent()
         {
-        }
-
-        public void Draw(double deltaTime)
-        {
-            // draw this object
         }
     }
 }

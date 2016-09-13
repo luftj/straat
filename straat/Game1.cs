@@ -14,7 +14,7 @@ namespace straat
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
+        public GraphicsDeviceManager graphics;
 		public SpriteBatch spriteBatch { get; private set;}
 
         Input InputHandler;
@@ -26,7 +26,8 @@ namespace straat
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            Content.RootDirectory = "Content";
+			Content.RootDirectory = "Content";
+			this.IsMouseVisible = true;
         }
 
         /// <summary>
@@ -97,13 +98,7 @@ namespace straat
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
-            spriteBatch.Begin();
-            //spriteBatch.DrawString(font, "test", Vector2.Zero, Color.White);
-
 			screenManager.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
-
-            spriteBatch.End();
 
             base.Draw(gameTime);
         }
