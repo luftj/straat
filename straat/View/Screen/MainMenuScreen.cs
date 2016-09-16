@@ -63,6 +63,7 @@ namespace straat.View.Screen
 
 			// set initial drawing position within bounds
 			Vector2 drawPos = Vector2.Zero;
+			drawPos.X = viewport.Width / 2;
 			drawPos.Y += 20;
 
 			// draw entries
@@ -132,5 +133,15 @@ namespace straat.View.Screen
             if (input.peek(InputCommand.EXIT))
                 screenManager.deactivateScreen(this);
         }
+
+		public void changeViewport(float widthScale, float heightScale)
+		{
+			viewport.X = (int)( viewport.X * widthScale );
+			viewport.Y = (int)( viewport.Y * heightScale );
+			viewport.Width = (int)( viewport.Width * widthScale );
+			viewport.Height = (int)( viewport.Height * heightScale );
+		}
     }
+
+
 }

@@ -17,6 +17,8 @@ namespace straat.View.Screen
 
         void Draw(double deltaT);
 
+		void changeViewport(float widthScale, float heightScale);
+
         //void Enter();
 
         //void Exit();

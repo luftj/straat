@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Input;
 using straat.Control;
 using straat.View.Screen;
 using System.Collections.Generic;
+using straat.View.Drawing;
 
 namespace straat
 {
@@ -28,6 +29,11 @@ namespace straat
             graphics = new GraphicsDeviceManager(this);
 			Content.RootDirectory = "Content";
 			this.IsMouseVisible = true;
+
+			graphics.PreferredBackBufferWidth = 800;
+			graphics.PreferredBackBufferHeight = 600;
+			graphics.IsFullScreen = false;
+
         }
 
         /// <summary>
@@ -43,6 +49,10 @@ namespace straat
 			screenManager = new ScreenManager(this, graphics.GraphicsDevice.Viewport.Bounds);
 			screenManager.activateScreen(new MainMenuScreen(screenManager,screenManager.maxBounds));
 
+
+			this.Window.AllowUserResizing = true;
+			this.Window.ClientSizeChanged += new EventHandler<EventArgs>(Window_ClientSizeChanged);
+
             base.Initialize();
         }
 
@@ -57,6 +67,11 @@ namespace straat
 
             // TODO: use this.Content to load your game content here
             font = Content.Load<SpriteFont>("testfont");
+
+
+			// Load content in all singletons
+			GeometryDrawer.init(this);
+			EntityFactory.Instance.LoadContent(Content);
         }
 
         /// <summary>
@@ -76,7 +91,6 @@ namespace straat
         protected override void Update(GameTime gameTime)
         {
             InputHandler.Update();
-            
 
             screenManager.Update(gameTime.ElapsedGameTime.TotalMilliseconds, InputHandler);
 
@@ -102,5 +116,11 @@ namespace straat
 
             base.Draw(gameTime);
         }
+
+		void Window_ClientSizeChanged( object sender,EventArgs e )
+		{
+			screenManager.changeBounds( GraphicsDevice.PresentationParameters.Bounds );
+			Console.WriteLine("Client size change");
+		}
     }
 }

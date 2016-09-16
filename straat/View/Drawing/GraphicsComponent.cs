@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework;
 
 namespace straat.View.Drawing
 {
-    class GraphicsComponent
+    public class GraphicsComponent
     {
-		public Texture2D texture { get; }
+		public Texture2D texture;//{ get; }
 
 		public GraphicsComponent()
         {

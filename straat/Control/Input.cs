@@ -122,7 +122,7 @@ namespace straat.Control
 			cur.Y = mstate.Position.Y;
 			if( mstate.LeftButton == ButtonState.Pressed && previousMState.LeftButton == ButtonState.Released && mstate.RightButton == ButtonState.Released )
 				cur.Command = PointerCommand.PRIMARY;
-			else if( mstate.RightButton == ButtonState.Pressed && previousMState.LeftButton == ButtonState.Released && mstate.LeftButton == ButtonState.Released )
+			else if( mstate.RightButton == ButtonState.Pressed && previousMState.RightButton == ButtonState.Released && mstate.LeftButton == ButtonState.Released )
 				cur.Command = PointerCommand.SECONDARY;
 			else
 				cur.Command = PointerCommand.NONE;

@@ -18,22 +18,25 @@ namespace straat.View.Drawing
 
 
         public static Vector2 cameraPosition;
-        public static float cameraZoom = 0.5f;
+        public static float cameraZoom = 1f;
 
 
-        public static void init(GraphicsDevice gd)
+		public static void init(Game1 game)//GraphicsDevice gd)
         {
-            graphicsDevice = gd;
-            spriteBatch = new SpriteBatch(gd);
-            dummyTexture = new Texture2D(gd, 1, 1);
+            //graphicsDevice = gd;
+            //spriteBatch = new SpriteBatch(gd);
+			graphicsDevice = game.GraphicsDevice;
+			spriteBatch = game.spriteBatch;
+
+			dummyTexture = new Texture2D(graphicsDevice, 1, 1);
             dummyTexture.SetData(new Color[] { Color.White });
 
 
-            basicEffect = new BasicEffect(gd);
+			basicEffect = new BasicEffect(graphicsDevice);
             basicEffect.VertexColorEnabled = true;
             basicEffect.Projection = Matrix.CreateOrthographicOffCenter
-               (0, gd.Viewport.Width,     // left, right
-                gd.Viewport.Height, 0,    // bottom, top
+				(0, graphicsDevice.Viewport.Width,     // left, right
+				 graphicsDevice.Viewport.Height, 0,    // bottom, top
                 0, 1);                    // near, far plane
 
 
@@ -46,9 +49,9 @@ namespace straat.View.Drawing
         public static void fillRect(Rectangle rect, Color colour)
         {
             //
-            spriteBatch.Begin();
+            //spriteBatch.Begin();
             spriteBatch.Draw(dummyTexture, new Rectangle((int)(rect.X * cameraZoom - cameraPosition.X), (int)(rect.Y * cameraZoom - cameraPosition.Y), (int)(rect.Width * cameraZoom), (int)(rect.Height * cameraZoom)), colour);
-            spriteBatch.End();
+            //spriteBatch.End();
         }
         /*
         SpriteBatch spriteBatch;

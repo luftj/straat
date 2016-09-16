@@ -64,6 +64,9 @@
     <Compile Include="Model\Map\Crossing.cs" />
     <Compile Include="Model\Map\Region.cs" />
     <Compile Include="Control\SelectableComponent.cs" />
+    <Compile Include="Model\EntityFactory.cs" />
+    <Compile Include="View\Screen\ScreenMessage.cs" />
+    <Compile Include="Model\AI\MovementComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -99,5 +102,6 @@
   -->
   <ItemGroup>
     <Folder Include="Model\Map\" />
+    <Folder Include="Model\AI\" />
   </ItemGroup>
 </Project>

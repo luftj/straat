@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using straat.Control;
 using Microsoft.Xna.Framework.Graphics;
+using straat.View.Drawing;
 
 namespace straat.View.Screen
 {
@@ -66,6 +67,16 @@ namespace straat.View.Screen
 		{
 			// todo: draw background
 			// todo: draw border
+			GeometryDrawer.fillRect(new Rectangle(Point.Zero,viewport.Bounds.Size),Color.Black);
+
+		}
+
+		public void changeViewport(float widthScale, float heightScale)
+		{
+			viewport.X = (int)( viewport.X * widthScale );
+			viewport.Y = (int)( viewport.Y * heightScale );
+			viewport.Width = (int)( viewport.Width * widthScale );
+			viewport.Height = (int)( viewport.Height * heightScale );
 		}
 	}
 }

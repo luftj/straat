@@ -3,11 +3,15 @@ using straat.View.Screen;
 using Microsoft.Xna.Framework;
 using straat.Control;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using straat.Model;
 
 namespace straat
 {
 	public class MainInterfaceScreen : InterfaceScreen
 	{
+		Entity selection;
+
 		public MainInterfaceScreen(ScreenManager sm, Rectangle b ) : base(sm,b)
 		{
 		}
@@ -21,6 +25,20 @@ namespace straat
 
 		public override void Update(double deltaT, Input input)
 		{
+			// handle passed messages
+			List<ScreenMessage> msgs = screenManager.getRelevantMessages(this.GetType());
+			foreach(ScreenMessage msg in msgs)
+			{
+				switch(msg.messageType)
+				{
+				case ScreenMessageType.SELECTION_CHANGE:
+					selection = (Entity)msg.message[0];
+					break;
+				default:
+					break;
+				}
+			}
+
 			base.Update( deltaT, input );
 		}
 
@@ -31,13 +49,16 @@ namespace straat
 			screenManager.game.graphics.GraphicsDevice.Viewport = viewport;
 			screenManager.game.spriteBatch.Begin();
 
+			base.Draw(deltaT);
+
 			// set initial drawing position
 			Vector2 drawPos = new Vector2(10,10);
 
 			// todo: draw content
+			screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id, drawPos, Color.White );
+			drawPos.Y += 20;
 			screenManager.game.spriteBatch.DrawString(font,"List _S_quads",drawPos,Color.White);
 
-			base.Draw(deltaT);
 
 
 			screenManager.game.spriteBatch.End();

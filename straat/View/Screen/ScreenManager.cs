@@ -14,10 +14,14 @@ namespace straat.View.Screen
 
         //List<IScreen> screens; // reactivate for making screen state persistent?
         List<IScreen> activeScreens;
-
 		List<IScreen> removeList;
 
 		public Rectangle maxBounds;
+
+
+		private List<ScreenMessage> messageQueue;
+		private List<ScreenMessage> prevMessageQueue;
+
 
 		public ScreenManager(Game1 game, Rectangle maxBounds)
         {
@@ -26,6 +30,9 @@ namespace straat.View.Screen
             //screens = new List<IScreen>();
             activeScreens = new List<IScreen>();
 			removeList = new List<IScreen>();
+
+			messageQueue = new List<ScreenMessage>();
+			prevMessageQueue = new List<ScreenMessage>();
         }
 
         public void activateScreen(IScreen screen)
@@ -49,6 +56,8 @@ namespace straat.View.Screen
         }
         public void Update(double deltaT, Input input)
 		{
+			messageQueue.Clear();
+
 			// update all active screens
 			for( int i = 0; i < activeScreens.Count(); ++i )
 			{
@@ -62,6 +71,38 @@ namespace straat.View.Screen
 			}
 
 			removeList.Clear();
+
+			prevMessageQueue = messageQueue;
         }
+
+		public List<ScreenMessage> getRelevantMessages(Type screenType)
+		{
+			List<ScreenMessage> relevantMsgs = new List<ScreenMessage>();
+			foreach(ScreenMessage item in prevMessageQueue)
+			{
+				if(screenType == item.target || screenType.IsSubclassOf(item.target))
+				{
+					relevantMsgs.Add(item);
+				}
+			}
+			return relevantMsgs;
+		}
+
+		public void addMessage(ScreenMessage newMsg)
+		{
+			messageQueue.Add(newMsg);
+		}
+
+		public void changeBounds(Rectangle newBounds)
+		{
+			float widthfactor = newBounds.Width / (float)maxBounds.Width;
+			float heightfactor = newBounds.Height / (float)maxBounds.Height;
+
+			maxBounds = newBounds;
+			foreach(IScreen screen in activeScreens)
+			{
+				screen.changeViewport( widthfactor, heightfactor );
+			}
+		}
     }
 }

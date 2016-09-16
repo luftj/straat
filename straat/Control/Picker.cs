@@ -19,20 +19,20 @@ namespace straat
 		private Color curColour;
 		private byte colourStep = 20;
 
-		Dictionary<Color, SelectableComponent> lookup;
+		Dictionary<Color, Entity> lookup;
 
 
 		public Picker(Game1 game, int width, int height)
 		{
 			this.game = game;
-			lookup = new Dictionary<Color, SelectableComponent>();
+			lookup = new Dictionary<Color, Entity>();
 
 			currentObjectMap = new RenderTarget2D( game.GraphicsDevice, width, height );
 		}
 
 		public void Initialize()
 		{
-			curColour = new Color( 100, 100, 100 ); // set start color, can not be black
+			//
 		}
 
 		public void LoadContent()
@@ -51,6 +51,7 @@ namespace straat
 		public void Begin()
 		{
 			lookup.Clear();
+			curColour = new Color( 100, 100, 100 ); // set start color, can not be black
 
 			game.GraphicsDevice.SetRenderTarget(currentObjectMap);
 			game.GraphicsDevice.Clear(Color.Black);
@@ -82,7 +83,7 @@ namespace straat
 		/// <param name="worldObject">World object.</param>
 		/// <param name="tex">Sprite of the object, which descirbes it's boundaries.</param>
 		/// <param name="pos">Position, where to blit the sprite on the viewport</param>
-		public void Add(SelectableComponent worldObject, Texture2D tex, Vector2 pos)
+		public void Add(Entity worldObject, Texture2D tex, Vector2 pos)
 		{
 			//begin
 
@@ -103,7 +104,7 @@ namespace straat
 		/// <returns>The selection. Or NULL if there was no object found.</returns>
 		/// <param name="x">The x coordinate.</param>
 		/// <param name="y">The y coordinate.</param>
-		public SelectableComponent getSelection(int x, int y)
+		public Entity getSelection(int x, int y)
 		{
 			// todo: only get single pixel data, not the whole rendertarget
 			Color[] dat = new Color [objectMap.Width * objectMap.Height];
