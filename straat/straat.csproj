@@ -67,6 +67,8 @@
     <Compile Include="Model\EntityFactory.cs" />
     <Compile Include="View\Screen\ScreenMessage.cs" />
     <Compile Include="Model\AI\MovementComponent.cs" />
+    <Compile Include="Model\Map\MapBuilder.cs" />
+    <Compile Include="Model\Map\Map.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -103,5 +105,11 @@
   <ItemGroup>
     <Folder Include="Model\Map\" />
     <Folder Include="Model\AI\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\fortune-voronoi\fortune-voronoi\FortuneVoronoi\FortuneVoronoi.csproj">
+      <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
+      <Name>FortuneVoronoi</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

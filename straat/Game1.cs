@@ -30,8 +30,8 @@ namespace straat
 			Content.RootDirectory = "Content";
 			this.IsMouseVisible = true;
 
-			graphics.PreferredBackBufferWidth = 800;
-			graphics.PreferredBackBufferHeight = 600;
+			graphics.PreferredBackBufferWidth = 1920;
+			graphics.PreferredBackBufferHeight = 1080;
 			graphics.IsFullScreen = false;
 
         }

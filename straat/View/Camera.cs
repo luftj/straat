@@ -11,6 +11,7 @@ namespace straat.View
     {
         public Vector2 position;
         public float zoomFactor;
+		private float zoomStep = 2.0f;
 		Rectangle viewport;
 
 		public Camera(Rectangle viewport)
@@ -20,6 +21,26 @@ namespace straat.View
 			this.viewport = viewport;
         }
 
+		public void ZoomIn()
+		{
+			zoomFactor *= zoomStep;
+		}
+
+		public void ZoomOut()
+		{
+			zoomFactor /= zoomStep;
+		}
+
+		public Vector2 getDrawPos(Vector2 worldPos)
+		{
+			return worldPos - position;
+		}
+
+		public Vector2 getWorldPos(Vector2 drawPos)
+		{
+			return drawPos + position;
+		}
+
 		public bool isInBounds(Point p)
 		{
 			return viewport.Contains( p - position.ToPoint() + viewport.Location);
@@ -27,6 +48,7 @@ namespace straat.View
 
 		public bool isInBounds(Rectangle r)
 		{
+			// assumes viewport is always bigger than r in every dimension
 			//check every corner of the given rectangle
 			Rectangle tmp = r;
 			tmp.Location -= position.ToPoint() - viewport.Location;
@@ -46,6 +68,14 @@ namespace straat.View
 			Point bottomleft = bottomright;
 			bottomleft.X -= r.Width;
 			return viewport.Contains( bottomleft );
+		}
+
+		public void changeViewport(float widthScale, float heightScale)
+		{
+			viewport.X = (int)( viewport.X * widthScale );
+			viewport.Y = (int)( viewport.Y * heightScale );
+			viewport.Width = (int)( viewport.Width * widthScale );
+			viewport.Height = (int)( viewport.Height * heightScale );
 		}
     }
 }

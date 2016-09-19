@@ -1,11 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 
 namespace straat
 {
-	public abstract class MapNode
+	public class MapNode
 	{
-		List<Street> roads;
+		public Vector2 position{ get; protected set;}
+
+		//public List<Region> touchingRegions;
+
+		public MapNode(Vector2 pos)
+		{
+			position = pos;
+		}
 	}
 }
 

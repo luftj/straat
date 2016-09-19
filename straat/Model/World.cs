@@ -11,9 +11,26 @@ namespace straat.Model
 	{
 		public List<Entity> entities;
 
+		public List<Crossing> roadNetwork;
+
+		public Map map;
+		public MapBuilder mapBuilder;
+
+
 		public World()
 		{
 			entities = new List<Entity>();
+
+			//roadNetwork = MapBuilder.Instance.createRandomRoadNetwork( MapBuilder.Instance.createRandomPoints( 30, 500 ) );
+
+			mapBuilder = new MapBuilder( 1000.0f, 500, 300.0f );
+
+			BenTools.Mathematics.VoronoiGraph voronoiGraph = mapBuilder.createVoronoiGraph();
+			map = mapBuilder.buildMapFromGraph( voronoiGraph );
+
+			mapBuilder.applyElevation(map);
+
+			//mapBuilder.applyRivers(map);
 		}
 
 		/// <summary>

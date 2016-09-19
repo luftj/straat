@@ -112,7 +112,8 @@ namespace straat.View.Screen
 				case 0:
 					// split screen vertically in two halves
 					Rectangle a = viewport.Bounds;
-					a.Width /= 2;
+					a.Width /= 3;
+					a.Width *= 2;
 					Rectangle b = a;
 					b.X += a.Width;
 

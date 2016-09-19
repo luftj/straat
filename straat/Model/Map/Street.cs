@@ -5,11 +5,13 @@ namespace straat
 {
 	public class Street
 	{
-		MapNode[] endpoints;
+		public MapNode[] endpoints;
 
-		public Street()
+		public Street(MapNode a, MapNode b)
 		{
 			endpoints = new MapNode[2];
+			endpoints[0] = a;
+			endpoints[1] = b;
 		}
 	}
 }

@@ -30,13 +30,15 @@ namespace straat
 			screenManager.game.graphics.GraphicsDevice.Viewport = viewport;
 			screenManager.game.spriteBatch.Begin();
 
+			base.Draw( deltaT );
+
+
 			// set initial drawing position within bounds
 			Vector2 drawPos = new Vector2( 10, 10 );
 
 			// todo: draw content
 			screenManager.game.spriteBatch.DrawString( font, "Return", drawPos, Color.White );
 
-			base.Draw( deltaT );
 
 
 			screenManager.game.spriteBatch.End();
