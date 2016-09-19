@@ -23,7 +23,7 @@ namespace straat.Model
 
 			//roadNetwork = MapBuilder.Instance.createRandomRoadNetwork( MapBuilder.Instance.createRandomPoints( 30, 500 ) );
 
-			mapBuilder = new MapBuilder( 1000.0f, 500, 300.0f );
+			mapBuilder = new MapBuilder( 1024.0f, 2048, 256.0f );
 
 			BenTools.Mathematics.VoronoiGraph voronoiGraph = mapBuilder.createVoronoiGraph();
 			map = mapBuilder.buildMapFromGraph( voronoiGraph );

@@ -6,20 +6,19 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using straat.Model;
 
-namespace straat
+namespace straat.Control
 {
 	public class Picker
 	{
-		Game1 game;
+		private Game1 game;
 
-		Effect fillTexEffect;
-		RenderTarget2D currentObjectMap;
-		Texture2D objectMap = null; // todo: 7remove?
+		private Effect fillTexEffect;
+		private RenderTarget2D objectMap;
 
 		private Color curColour;
-		private byte colourStep = 20;
+		private byte colourStep = 1;
 
-		Dictionary<Color, Entity> lookup;
+		private Dictionary<Color, Entity> lookup;
 
 
 		public Picker(Game1 game, int width, int height)
@@ -27,22 +26,7 @@ namespace straat
 			this.game = game;
 			lookup = new Dictionary<Color, Entity>();
 
-			currentObjectMap = new RenderTarget2D( game.GraphicsDevice, width, height );
-		}
-
-		public void Initialize()
-		{
-			//
-		}
-
-		public void LoadContent()
-		{
-			//
-		}
-
-		public void UnloadContent()
-		{
-			//
+			objectMap = new RenderTarget2D( game.GraphicsDevice, width, height );
 		}
 
 		/// <summary>
@@ -51,14 +35,12 @@ namespace straat
 		public void Begin()
 		{
 			lookup.Clear();
-			curColour = new Color( 100, 100, 100 ); // set start color, can not be black
+			curColour = new Color( 0, 0, 1 ); // set start color, can not be black
 
-			game.GraphicsDevice.SetRenderTarget(currentObjectMap);
+			game.GraphicsDevice.SetRenderTarget(objectMap);
 			game.GraphicsDevice.Clear(Color.Black);
 
 			game.spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, fillTexEffect);
-
-
 		}
 
 		/// <summary>
@@ -70,22 +52,17 @@ namespace straat
 
 			// switch back to default render target
 			game.GraphicsDevice.SetRenderTarget(null);
-
-
-
-			//save object mapping for handling in next frame
-			objectMap = (Texture2D)currentObjectMap;
 		}
 
 		/// <summary>
-		/// Adds an object, to handle clicks on it.
+		/// Adds an object, to handle clicks on it. Use inbetween Begin() and End() calls!
 		/// </summary>
 		/// <param name="worldObject">World object.</param>
 		/// <param name="tex">Sprite of the object, which descirbes it's boundaries.</param>
 		/// <param name="pos">Position, where to blit the sprite on the viewport</param>
 		public void Add(Entity worldObject, Texture2D tex, Vector2 pos)
 		{
-			//begin
+			// call to begin
 
 			nextColour();	// use a new color key for this object
 
@@ -95,7 +72,7 @@ namespace straat
 			//add object to color-lookup-table
 			lookup.Add(curColour, worldObject);
 
-			//end
+			// call to end
 		}
 
 		/// <summary>
@@ -106,16 +83,14 @@ namespace straat
 		/// <param name="y">The y coordinate.</param>
 		public Entity getSelection(int x, int y)
 		{
-			// todo: only get single pixel data, not the whole rendertarget
-			Color[] dat = new Color [objectMap.Width * objectMap.Height];
-			objectMap.GetData(dat);
 			int i = x + y * objectMap.Width;
-
-			if( dat[i] != Color.Black )
-				return lookup[dat[i]];
+			Rectangle r = new Rectangle( x, y, 1, 1 );
+			Color[] dat = new Color[1];
+			objectMap.GetData<Color>(0,r, dat, 0, 1 );
+			if( dat[0] != Color.Black )
+				return lookup[dat[0]];
 			else return null;
 		}
-
 
 		/// <summary>
 		/// generates a new unique color

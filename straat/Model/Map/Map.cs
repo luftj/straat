@@ -18,7 +18,7 @@ namespace straat
 
 		#endregion
 
-		public float elevation {
+		public float elevation = 0; /*{
 			get{
 				if( corners.Count == 0 )
 					return 0.0f;
@@ -29,7 +29,7 @@ namespace straat
 					ret += c.elevation;
 				return ret /= corners.Count;
 			}
-		}
+		}*/
 
 		public bool isOcean {get{
 				foreach(Corner c in corners)
@@ -123,7 +123,16 @@ namespace straat
 		#endregion
 
 
-		public float elevation = 10.0f;
+		public float elevation //= 10.0f;
+		{get{
+				float ret = 0.0f;
+				foreach(Center c in touches)
+				{
+					ret += c.elevation;
+				}
+				ret /= touches.Count;
+				return ret;
+			}}
 
 		public bool isOcean{get{
 				bool ret = float.IsInfinity( position.Length() );

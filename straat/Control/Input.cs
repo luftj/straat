@@ -23,7 +23,7 @@ namespace straat.Control
 		// ...
 		SCROLL_UP,
 		SCROLL_DOWN,
-		SHIFT,
+		SHIFT_CONT,
     }
 
 	public enum PointerCommand
@@ -50,15 +50,15 @@ namespace straat.Control
 
     public class Input
     {
-        public HashSet<InputCommand> commands { get; private set; }
+		public HashSet<InputCommand> commands { get; private set;}
 
-        KeyboardState previousKBState;
+        private KeyboardState previousKBState;
 
-		MouseState previousMState;
-		public PointerEvent pointerEvent { get; private set; }
+		private MouseState previousMState;
+		public PointerEvent pointerEvent { get; private set;}
 
 		Dictionary<Keys,InputCommand> keyBindings;
-		Dictionary<Keys,InputCommand> contKeyBindinfs;
+		Dictionary<Keys,InputCommand> contKeyBindings;
 
         public Input()
         {
@@ -66,7 +66,7 @@ namespace straat.Control
             previousKBState = Keyboard.GetState();
 
 			keyBindings = new Dictionary<Keys, InputCommand>();
-			contKeyBindinfs = new Dictionary<Keys, InputCommand>();
+			contKeyBindings = new Dictionary<Keys, InputCommand>();
 
 			setDefaultKeyBindings();
         }
@@ -80,55 +80,17 @@ namespace straat.Control
 
         private void handleKeyBoard(KeyboardState kbstate)
 		{
-			// method A, List traversal
+			// method A: List traversal
 			List<Keys> ks = kbstate.GetPressedKeys().ToList();
-			//ks.RemoveAll(item => previousKBState.GetPressedKeys().Contains(item));
 
 			foreach(Keys key in ks)
 			{
 				if( !previousKBState.GetPressedKeys().Contains( key ) && keyBindings.ContainsKey( key ) )
 					commands.Add( keyBindings[key] );
-				if( contKeyBindinfs.ContainsKey( key ) )
-					commands.Add( contKeyBindinfs[key] );
+				if( contKeyBindings.ContainsKey( key ) )
+					commands.Add( contKeyBindings[key] );
 			}
-			// todo: allow continuous presses
 
-
-			// method B, many conditions
-			/*
-			if( kbstate.IsKeyDown( Keys.Escape ) )
-				commands.Add( InputCommand.EXIT );
-
-			if( kbstate.IsKeyDown( Keys.Down ) )
-				commands.Add( InputCommand.DOWN_CONT );
-
-			if( kbstate.IsKeyDown( Keys.Down ) && previousKBState.IsKeyUp( Keys.Down ) )
-				commands.Add( InputCommand.DOWN );
-
-			if( kbstate.IsKeyDown( Keys.Up ) )
-				commands.Add( InputCommand.UP_CONT );
-
-			if( kbstate.IsKeyDown( Keys.Up ) && previousKBState.IsKeyUp( Keys.Up ) )
-				commands.Add( InputCommand.UP );
-
-			if( kbstate.IsKeyDown( Keys.Left ) )
-				commands.Add( InputCommand.LEFT_CONT );
-
-			if( kbstate.IsKeyDown( Keys.Right ) )
-				commands.Add( InputCommand.RIGHT_CONT );
-
-			if( kbstate.IsKeyDown( Keys.Enter ) )
-				commands.Add( InputCommand.SELECT );
-
-			if( kbstate.IsKeyDown( Keys.S ) )
-				commands.Add( InputCommand.S );
-
-			if( kbstate.IsKeyDown( Keys.PageUp ) && previousKBState.IsKeyUp( Keys.PageUp ) )
-				commands.Add( InputCommand.SCROLL_UP );
-			
-			if( kbstate.IsKeyDown( Keys.PageDown ) && previousKBState.IsKeyUp( Keys.PageDown ) )
-				commands.Add( InputCommand.SCROLL_DOWN );
-			*/
 			previousKBState = kbstate;
 		}
 
@@ -184,15 +146,15 @@ namespace straat.Control
 
 
 
-			contKeyBindinfs.Add( Keys.Left, InputCommand.LEFT_CONT );
+			contKeyBindings.Add( Keys.Left, InputCommand.LEFT_CONT );
 
-			contKeyBindinfs.Add( Keys.Right, InputCommand.RIGHT_CONT );
+			contKeyBindings.Add( Keys.Right, InputCommand.RIGHT_CONT );
 
-			contKeyBindinfs.Add( Keys.Up, InputCommand.UP_CONT );
+			contKeyBindings.Add( Keys.Up, InputCommand.UP_CONT );
 
-			contKeyBindinfs.Add( Keys.Down, InputCommand.DOWN_CONT );
+			contKeyBindings.Add( Keys.Down, InputCommand.DOWN_CONT );
 
-			contKeyBindinfs.Add( Keys.LeftShift, InputCommand.SHIFT );
+			contKeyBindings.Add( Keys.LeftShift, InputCommand.SHIFT_CONT );
 		}
     }
 }

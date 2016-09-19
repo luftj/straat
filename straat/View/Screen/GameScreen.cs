@@ -73,13 +73,12 @@ namespace straat.View.Screen
 			#region picker
 			// refresh selectable entities
 			picker.Begin();
-			// todo: handle everything selectable (implementing ISelectable)
 			foreach(Entity entity in world.getSelectableEntities())
 			{
 				//  consider screen boundaries
-				Vector2 drawingPos = entity.worldPos - camera.position;
-				if( !camera.isInBounds( drawingPos.ToPoint() ) )					// todo: check for rectangle of texture instead // todo: respect zoom level
-					continue;
+				Vector2 drawingPos = camera.getDrawPos(entity.worldPos);
+//				if( !camera.isInBounds( drawingPos.ToPoint() ) )					// todo: check for rectangle of texture instead // todo: respect zoom level
+//					continue;
 				picker.Add( entity, entity.gc.texture, drawingPos );
 			}
 			picker.End();
@@ -97,12 +96,6 @@ namespace straat.View.Screen
 				List<Point> poly = new List<Point>();
 				List<Color> polyCol = new List<Color>();
 
-
-
-				// region center
-				Vector2 d = camera.getDrawPos(c.position);
-
-
 				// polygon nodes
 				foreach(Corner co in c.polygon)
 				{
@@ -116,10 +109,11 @@ namespace straat.View.Screen
 					if(co.isOcean)
 						polyCol.Add(Color.DarkBlue);
 					else
-						polyCol.Add( Color.Lerp(Color.ForestGreen,Color.LightSlateGray,co.elevation/world.mapBuilder.maxElevation));
+						polyCol.Add( Color.Lerp(Color.ForestGreen,Color.SlateGray,co.elevation/world.mapBuilder.maxElevation));
 				}
 
-
+				// region center
+				Vector2 d = camera.getDrawPos(c.position);
 				// draw topography
 				Color cCol;
 				if(c.isOcean)
@@ -129,7 +123,7 @@ namespace straat.View.Screen
 				}
 				else
 				{
-					cCol = Color.Lerp(Color.ForestGreen,Color.LightSlateGray,c.elevation/world.mapBuilder.maxElevation);
+					cCol = Color.Lerp(Color.ForestGreen,Color.SlateGray,c.elevation/world.mapBuilder.maxElevation);
 					GeometryDrawer.fillPolyGradient(d,poly,cCol,polyCol.ToArray());
 				}
 
@@ -139,7 +133,7 @@ namespace straat.View.Screen
 					Vector2 a = camera.getDrawPos(e.endpoints[0].position);
 					Vector2 b = camera.getDrawPos(e.endpoints[1].position);
 
-					GeometryDrawer.drawLine(a,b,Color.White);
+					//GeometryDrawer.drawLine(a,b,Color.White);
 				}
 
 				// draw river
@@ -161,7 +155,7 @@ namespace straat.View.Screen
 				}
 
 				// draw region centers
-				GeometryDrawer.fillRect((int)d.X,(int)d.Y,5,5,Color.Blue);
+				//GeometryDrawer.fillRect((int)d.X,(int)d.Y,5,5,Color.Blue);
 				Vector2 curr = curRegion.position;
 				curr = camera.getDrawPos(curr);
 				GeometryDrawer.fillRect((int)curr.X,(int)curr.Y,5,5,Color.Red);
@@ -181,7 +175,7 @@ namespace straat.View.Screen
 			}
 			#endregion
 
-			screenManager.game.spriteBatch.DrawString( font, debugtext, new Vector2( 10, 10 ), Color.Red );
+			screenManager.game.spriteBatch.DrawString( font, debugtext, new Vector2( 10, 10 ), Color.White );
 
 			#region end_draw
 			screenManager.game.spriteBatch.End();
@@ -195,7 +189,7 @@ namespace straat.View.Screen
 		{
 			// move camera according to input
 			int speed = 1;
-			if( input.peek( InputCommand.SHIFT ) ) speed = 10;
+			if( input.peek( InputCommand.SHIFT_CONT ) ) speed = 10;
 			if( input.peek( InputCommand.LEFT_CONT ) ) 	camera.position.X-=speed; 
 			if( input.peek( InputCommand.RIGHT_CONT ) ) camera.position.X+=speed;
 			if( input.peek( InputCommand.UP_CONT ) ) 	camera.position.Y-=speed;
@@ -208,7 +202,8 @@ namespace straat.View.Screen
 			int x = input.pointerEvent.X;
 			int y = input.pointerEvent.Y;
 			Vector2 worldPos = camera.getWorldPos( new Vector2( x, y ) );
-			debugtext = worldPos.X + ", " + worldPos.Y;
+			debugtext = "screen: " + x + ", " + y + "\n";
+			debugtext += "world: " + worldPos.X + ", " + worldPos.Y;
 			curRegion = world.map.getRegionAt( worldPos.X, worldPos.Y );
 			debugtext += ", elevation: " + curRegion.elevation;
 
@@ -233,6 +228,7 @@ namespace straat.View.Screen
 			viewport.Height = (int)( viewport.Height * heightScale );
 
 			camera.changeViewport(widthScale,heightScale);
+			picker = new Picker( screenManager.game, viewport.Bounds.Width, viewport.Bounds.Height );
 		}
         
 	}

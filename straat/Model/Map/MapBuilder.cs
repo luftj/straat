@@ -20,7 +20,7 @@ namespace straat
 		#region params
 		float dimensions;
 		int numberOfRegions;
-		public float maxElevation {get;}
+		public float maxElevation { get; private set;}
 		#endregion
 
 		public MapBuilder(float dimensions,int numberOfRegions,float maxElevation)
@@ -191,91 +191,211 @@ namespace straat
 
 		public void applyElevation(Map map)
 		{
-			float min = -dimensions/2;
-			float max = dimensions/2;
-			// draw ridges
-			int numberRidges = 30;
-			while(numberRidges >0)
+			Vector2 start = Vector2.Zero;
+			Center curCenter = map.getRegionAt(start.X,start.Y);
+			int numberOfRidges = 246;
+			while(numberOfRidges > 0)
 			{
-				// start somewhere
-				// todo: bias starting point towards the center
-				Corner curCorner = map.corners.Values.ElementAt(rng.Next(map.corners.Count));
-				if( curCorner.isOcean )
-					continue;
-
-				float maxheight = maxElevation;
-				float maxheightstep = 30.0f;
-
-				float distfromcenter = ( curCorner.position ).Length();
-				float leftheight = maxheight;
-
-
-				// random walk to the ocean
-				// todo: bias random walk direction to the ocean
-				while(true)
-				{
-					if( curCorner.elevation < maxheight - maxheightstep )
-					{
-						curCorner.elevation += (float)rng.NextDouble() * maxheightstep;
-//						if( curCorner.elevation <= 0.0f )
-//							curCorner.isOcean = true;
-					}
-					leftheight -= maxheightstep;
-					curCorner = curCorner.adjacent.ElementAt( rng.Next( curCorner.adjacent.Count ) );
-					if (curCorner.isOcean)
-						break;
-				}
-				--numberRidges;
+				float angle = (float)rng.NextDouble() * MathHelper.TwoPi - MathHelper.Pi;
+				drawCenterRidge(curCenter,angle,maxElevation,0.1f);
+				curCenter = curCenter.neighbours.ElementAt( rng.Next( curCenter.neighbours.Count ) );
+				--numberOfRidges;
 			}
 		}
 
-		public void applyRivers(Map map)
+		public void drawCenterRidge(Center start, float direction, float startElevation, float branchProbability, HashSet<int> bt = null)
 		{
-			int numberOfRivers = 10;
-			while(numberOfRivers>0)
-			{
-				River curRiver = new River();
-				// start somewhere
-				Corner curCorner = map.corners.Values.ElementAt(rng.Next(map.corners.Count));
-				if( curCorner.elevation < maxElevation/3.0f )
-					continue;
-				curRiver.path.Add( curCorner );
+			// walk outwards
 
-				bool riverAdded = false;
-				// random walk downhill
-				while(true)
+			List<Center> ridge = new List<Center>();
+			HashSet<int> beenThere = bt;
+			if( bt == null )
+				beenThere = new HashSet<int>();
+			Center curC = start;
+
+
+			while(true)
+			{
+				ridge.Add(curC);
+				beenThere.Add(curC.GetHashCode());
+
+				//Vector2 direction = ( curC.position - start.position );
+				float angle = direction;// (float)Math.Atan2( direction.X, direction.Y );
+				angle += (float)rng.NextDouble() * 2.0f - 1.0f;
+				// find edge closest to direction
+				float minangle = float.PositiveInfinity;
+				Center minC = null;
+				foreach(Center c in curC.neighbours)
 				{
-					// find steepest downslope
-					float maxSlope = float.NegativeInfinity;
-					Corner lowestAdjacent = null;
-					foreach(Corner c in curCorner.adjacent)
+					Vector2 edge = c.position - curC.position;
+					float cAngle = (float)Math.Atan2( edge.X, edge.Y );
+
+					float anglediff = Math.Abs( angle - cAngle );
+
+					if (anglediff < minangle)
 					{
-						float curSlope = curCorner.elevation - c.elevation;
-						if( curSlope > maxSlope)
-						{
-							maxSlope = curSlope;
-							lowestAdjacent = c;
-						}
-					}
-					if( maxSlope <= 0.0f )
-					{
-						lowestAdjacent.elevation = curCorner.elevation-1.0f;
-					}
-					curCorner = lowestAdjacent;
-					curRiver.path.Add(curCorner);
-					if( curCorner.isOcean )
-					{
-						riverAdded = true;
-						break;
+						minangle = anglediff;
+						minC = c;
 					}
 				}
-				//if( riverAdded )
-					map.rivers.Add( curRiver );
-//				else
-//					continue;
-				--numberOfRivers;
+				if( !beenThere.Contains( minC.GetHashCode() ) )
+					curC = minC;
+				else
+					break;
+				
+			}
+
+			float curElevation = startElevation;
+
+			if( ridge.Count == 0 )
+				return;
+
+			float elevationstep = startElevation / ridge.Count;
+			foreach(Center ce in ridge)
+			{
+				ce.elevation = curElevation;
+				curElevation -= elevationstep;
+
+				// branch
+				float x = (float)rng.NextDouble();
+				if(x<branchProbability)
+				{
+					float curAngle = direction + (float)rng.NextDouble() * 2.0f - 1.0f;
+					drawCenterRidge(ce,curElevation,curAngle,branchProbability,beenThere);
+				}
 			}
 		}
+
+		public void drawCornerRidge()
+		{
+			
+		}
+
+
+//		public void applyElevation(Map map)
+//		{
+//			float min = -dimensions/2;
+//			float max = dimensions/2;
+//			// draw ridges
+//			int numberRidges = 30;
+//			while(numberRidges >0)
+//			{
+//				// start somewhere
+//				// todo: bias starting point towards the center
+//				Corner curCorner = map.corners.Values.ElementAt(rng.Next(map.corners.Count));
+//				if( curCorner.isOcean )
+//					continue;
+//
+//				float maxheight = maxElevation;
+//				float maxheightstep = 30.0f;
+//
+//				float distfromcenter = ( curCorner.position ).Length();
+//				float leftheight = maxheight;
+//
+//
+//				// random walk to the ocean
+//				// todo: bias random walk direction to the ocean
+//				while(true)
+//				{
+//					if( curCorner.elevation < maxheight - maxheightstep )
+//					{
+//						curCorner.elevation += (float)rng.NextDouble() * maxheightstep;
+////						if( curCorner.elevation <= 0.0f )
+////							curCorner.isOcean = true;
+//					}
+//					leftheight -= maxheightstep;
+//					curCorner = curCorner.adjacent.ElementAt( rng.Next( curCorner.adjacent.Count ) );
+//					if (curCorner.isOcean)
+//						break;
+//				}
+//				--numberRidges;
+//			}
+//		}
+
+//		public void applyElevation2(Map map)
+//		{
+//			Vector2 start = Vector2.Zero;
+//			Center curCenter = map.getRegionAt(start.X,start.Y);
+//			curCenter.elevation = 0.0f;
+//
+//			List<Center> todo = new List<Center>();
+//
+//			//float maxElev = float.NegativeInfinity;
+//			float minElev = float.PositiveInfinity;
+//
+//			float prevElev;
+//			do
+//			{
+//				prevElev = curCenter.elevation;
+//				foreach( Center c in curCenter.neighbours )
+//				{
+//					if( c.elevation == float.PositiveInfinity )
+//						todo.Add( c );
+//				}
+//
+//				curCenter = todo[0];
+//				curCenter.elevation = prevElev - (float)rng.NextDouble();
+//
+//				if( curCenter.elevation < minElev )
+//					minElev = curCenter.elevation;
+//
+//				todo.Remove( curCenter );
+//			} while( todo.Count > 0 );
+//
+//			foreach(Center ce in map.centers.Values)
+//			{
+//				ce.elevation += -(minElev);
+//			}
+//			maxElevation = -minElev;
+//		}
+//
+//		public void applyRivers(Map map)
+//		{
+//			int numberOfRivers = 10;
+//			while(numberOfRivers>0)
+//			{
+//				River curRiver = new River();
+//				// start somewhere
+//				Corner curCorner = map.corners.Values.ElementAt(rng.Next(map.corners.Count));
+//				if( curCorner.elevation < maxElevation/3.0f )
+//					continue;
+//				curRiver.path.Add( curCorner );
+//
+//				bool riverAdded = false;
+//				// random walk downhill
+//				while(true)
+//				{
+//					// find steepest downslope
+//					float maxSlope = float.NegativeInfinity;
+//					Corner lowestAdjacent = null;
+//					foreach(Corner c in curCorner.adjacent)
+//					{
+//						float curSlope = curCorner.elevation - c.elevation;
+//						if( curSlope > maxSlope)
+//						{
+//							maxSlope = curSlope;
+//							lowestAdjacent = c;
+//						}
+//					}
+//					if( maxSlope <= 0.0f )
+//					{
+//						lowestAdjacent.elevation = curCorner.elevation-1.0f;
+//					}
+//					curCorner = lowestAdjacent;
+//					curRiver.path.Add(curCorner);
+//					if( curCorner.isOcean )
+//					{
+//						riverAdded = true;
+//						break;
+//					}
+//				}
+//				//if( riverAdded )
+//					map.rivers.Add( curRiver );
+////				else
+////					continue;
+//				--numberOfRivers;
+//			}
+//		}
 	}
 }
 
