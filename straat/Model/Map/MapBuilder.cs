@@ -23,59 +23,18 @@ namespace straat
 		public float maxElevation { get; private set;}
 		#endregion
 
-		public MapBuilder(float dimensions,int numberOfRegions,float maxElevation)
+		Map map;
+
+		public MapBuilder(float dimensions,int numberOfRegions,float maxElevation, int? seed = null)
 		{
-			rng = new Random();
+			if( seed == null )
+				rng = new Random();
+			else
+				rng = new Random((int)seed);
 
 			this.dimensions = dimensions;
 			this.numberOfRegions = numberOfRegions;
 			this.maxElevation = maxElevation;
-		}
-
-		public List<Vector2> createRandomPoints(int numberOfPoints, int radius)
-		{
-			List<Vector2> ret = new List<Vector2>();
-			int i = numberOfPoints;
-			while(i>0)
-			{
-				float x = rng.Next( radius ) - radius / 2.0f;
-				float y = rng.Next( radius ) - radius / 2.0f;
-				ret.Add( new Vector2( x, y ) );
-				--i;
-			}
-			return ret;
-		}
-
-		public List<Crossing> createRandomRoadNetwork(List<Vector2> points)
-		{
-			float p = 0.05f;
-
-			List<Crossing> nodes = new List<Crossing>();
-
-			foreach(Vector2 point in points)
-			{
-				Crossing curNode = new Crossing( point );
-
-				foreach(Crossing node in nodes)
-				{
-					float xdistance = curNode.position.X - node.position.X;
-					//xdistance *= xdistance;
-					float ydistance = curNode.position.Y - node.position.Y;
-					//ydistance *= ydistance;
-
-					//p = 1.0f / (( Math.Abs(xdistance) + Math.Abs(ydistance )/10.0f));
-					float X = (float)rng.NextDouble();
-					if(X<p)
-					{
-						Street newStreet = new Street( curNode, node );
-						curNode.roads.Add(newStreet);
-						node.roads.Add(newStreet);
-					}
-				}
-				nodes.Add(curNode);
-			}
-
-			return nodes;
 		}
 
 		public BenTools.Mathematics.VoronoiGraph createVoronoiGraph()
@@ -89,6 +48,8 @@ namespace straat
 			{
 				BenTools.Mathematics.Vector v = new BenTools.Mathematics.Vector( 2 );
 				v.Randomize(min,max);
+				while( Math.Sqrt(v.SquaredLength) > ( dimensions/2 ) )	// makes it round
+					v.Randomize( min, max );
 				points.Add(v);
 				--it;
 			}
@@ -186,10 +147,11 @@ namespace straat
 
 			}
 
-			return ret;
+			map = ret;
+			return map;
 		}
 
-		public void applyElevation(Map map)
+		public void applyElevation()
 		{
 			Vector2 start = Vector2.Zero;
 			Center curCenter = map.getRegionAt(start.X,start.Y);
@@ -271,131 +233,56 @@ namespace straat
 			
 		}
 
+		public void normaliseElevation()
+		{
+			foreach(Center c in map.centers.Values)
+			{
+				if(c.elevation < 0.0f)
+				{
+					c.elevation = 0.0f;
+					continue;
+				}
 
-//		public void applyElevation(Map map)
-//		{
-//			float min = -dimensions/2;
-//			float max = dimensions/2;
-//			// draw ridges
-//			int numberRidges = 30;
-//			while(numberRidges >0)
-//			{
-//				// start somewhere
-//				// todo: bias starting point towards the center
-//				Corner curCorner = map.corners.Values.ElementAt(rng.Next(map.corners.Count));
-//				if( curCorner.isOcean )
-//					continue;
-//
-//				float maxheight = maxElevation;
-//				float maxheightstep = 30.0f;
-//
-//				float distfromcenter = ( curCorner.position ).Length();
-//				float leftheight = maxheight;
-//
-//
-//				// random walk to the ocean
-//				// todo: bias random walk direction to the ocean
-//				while(true)
-//				{
-//					if( curCorner.elevation < maxheight - maxheightstep )
-//					{
-//						curCorner.elevation += (float)rng.NextDouble() * maxheightstep;
-////						if( curCorner.elevation <= 0.0f )
-////							curCorner.isOcean = true;
-//					}
-//					leftheight -= maxheightstep;
-//					curCorner = curCorner.adjacent.ElementAt( rng.Next( curCorner.adjacent.Count ) );
-//					if (curCorner.isOcean)
-//						break;
-//				}
-//				--numberRidges;
-//			}
-//		}
+				c.elevation /= maxElevation;
+			}
+			maxElevation = 1.0f;
+		}
 
-//		public void applyElevation2(Map map)
-//		{
-//			Vector2 start = Vector2.Zero;
-//			Center curCenter = map.getRegionAt(start.X,start.Y);
-//			curCenter.elevation = 0.0f;
-//
-//			List<Center> todo = new List<Center>();
-//
-//			//float maxElev = float.NegativeInfinity;
-//			float minElev = float.PositiveInfinity;
-//
-//			float prevElev;
-//			do
-//			{
-//				prevElev = curCenter.elevation;
-//				foreach( Center c in curCenter.neighbours )
-//				{
-//					if( c.elevation == float.PositiveInfinity )
-//						todo.Add( c );
-//				}
-//
-//				curCenter = todo[0];
-//				curCenter.elevation = prevElev - (float)rng.NextDouble();
-//
-//				if( curCenter.elevation < minElev )
-//					minElev = curCenter.elevation;
-//
-//				todo.Remove( curCenter );
-//			} while( todo.Count > 0 );
-//
-//			foreach(Center ce in map.centers.Values)
-//			{
-//				ce.elevation += -(minElev);
-//			}
-//			maxElevation = -minElev;
-//		}
-//
-//		public void applyRivers(Map map)
-//		{
-//			int numberOfRivers = 10;
-//			while(numberOfRivers>0)
-//			{
-//				River curRiver = new River();
-//				// start somewhere
-//				Corner curCorner = map.corners.Values.ElementAt(rng.Next(map.corners.Count));
-//				if( curCorner.elevation < maxElevation/3.0f )
-//					continue;
-//				curRiver.path.Add( curCorner );
-//
-//				bool riverAdded = false;
-//				// random walk downhill
-//				while(true)
-//				{
-//					// find steepest downslope
-//					float maxSlope = float.NegativeInfinity;
-//					Corner lowestAdjacent = null;
-//					foreach(Corner c in curCorner.adjacent)
-//					{
-//						float curSlope = curCorner.elevation - c.elevation;
-//						if( curSlope > maxSlope)
-//						{
-//							maxSlope = curSlope;
-//							lowestAdjacent = c;
-//						}
-//					}
-//					if( maxSlope <= 0.0f )
-//					{
-//						lowestAdjacent.elevation = curCorner.elevation-1.0f;
-//					}
-//					curCorner = lowestAdjacent;
-//					curRiver.path.Add(curCorner);
-//					if( curCorner.isOcean )
-//					{
-//						riverAdded = true;
-//						break;
-//					}
-//				}
-//				//if( riverAdded )
-//					map.rivers.Add( curRiver );
-////				else
-////					continue;
-//				--numberOfRivers;
-//			}
-//		}
+		public void raiseElevation(float amount)
+		{
+			foreach( Center c in map.centers.Values )
+				c.elevation += amount;
+
+			maxElevation += amount;
+		}
+			
+		/// <summary>
+		/// Smoothens the minima.
+		/// </summary>
+		/// <param name="threshold">Threshold [0,1].</param>
+		/// <param name="factor">Factor [0,1].</param>
+		public void smoothenMinima(float threshold, float factor)
+		{
+			foreach(Center c in map.centers.Values)
+			{
+				float greatestDifference = float.PositiveInfinity;
+				float meanElev = 0.0f;
+
+				foreach(Center n in c.neighbours)
+				{
+					float currentDifference = c.elevation - n.elevation;
+					if( currentDifference < greatestDifference )
+						greatestDifference = currentDifference;
+					meanElev += n.elevation;
+				}
+				meanElev /= c.neighbours.Count;
+
+				if( Math.Abs(greatestDifference) > threshold )
+				{
+					c.elevation = meanElev * factor + c.elevation * ( 1.0f - factor );
+				}
+			}
+		}
 	}
 }
 

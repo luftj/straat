@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace straat.View
 {
-    class Camera
+    public class Camera
     {
         public Vector2 position;
         public float zoomFactor;

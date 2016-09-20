@@ -22,6 +22,8 @@ namespace straat.View.Screen
 		World world;
 		Entity selection;
 
+		MapDrawer mapDrawer;
+
 		#region content
 		SpriteFont font;
 		string debugtext;
@@ -37,9 +39,11 @@ namespace straat.View.Screen
 
 			camera = new Camera( bounds );
 
+
 			world = new World();
 
 
+			mapDrawer = new MapDrawer(screenManager.game,world.map);
 		}
 
 		public void Initialize()
@@ -87,79 +91,16 @@ namespace straat.View.Screen
 
 			#region scene_drawing
 			// draw world
-			screenManager.game.GraphicsDevice.Clear(Color.CornflowerBlue);
+			screenManager.game.GraphicsDevice.Clear(Color.Magenta);
 			screenManager.game.spriteBatch.Begin();
 
+			mapDrawer.Draw(camera);
 
-			foreach(Center c in world.map.centers.Values)
-			{
-				List<Point> poly = new List<Point>();
-				List<Color> polyCol = new List<Color>();
+			// highlight region under cursor
+			Vector2 curr = curRegion.position;
+			curr = camera.getDrawPos(curr);
+			GeometryDrawer.fillRect((int)curr.X,(int)curr.Y,5,5,Color.Red);
 
-				// polygon nodes
-				foreach(Corner co in c.polygon)
-				{
-					Vector2 f = camera.getDrawPos(co.position);
-
-					if(float.IsInfinity(co.position.Length()))
-						continue;
-
-					poly.Add(f.ToPoint());
-
-					if(co.isOcean)
-						polyCol.Add(Color.DarkBlue);
-					else
-						polyCol.Add( Color.Lerp(Color.ForestGreen,Color.SlateGray,co.elevation/world.mapBuilder.maxElevation));
-				}
-
-				// region center
-				Vector2 d = camera.getDrawPos(c.position);
-				// draw topography
-				Color cCol;
-				if(c.isOcean)
-				{
-					cCol = Color.DarkBlue;
-					GeometryDrawer.fillPoly(poly,cCol);
-				}
-				else
-				{
-					cCol = Color.Lerp(Color.ForestGreen,Color.SlateGray,c.elevation/world.mapBuilder.maxElevation);
-					GeometryDrawer.fillPolyGradient(d,poly,cCol,polyCol.ToArray());
-				}
-
-				// draw voronoi edges
-				foreach(VDEdge e in c.borders)
-				{
-					Vector2 a = camera.getDrawPos(e.endpoints[0].position);
-					Vector2 b = camera.getDrawPos(e.endpoints[1].position);
-
-					//GeometryDrawer.drawLine(a,b,Color.White);
-				}
-
-				// draw river
-				foreach(River r in world.map.rivers)
-				{
-					for(int i = 1;i<r.path.Count;++i)
-					{
-						Vector2 a = camera.getDrawPos(r.path[i-1].position);
-						Vector2 b = camera.getDrawPos(r.path[i].position);
-						GeometryDrawer.drawLine(a,b,Color.Blue);
-					}
-				}
-
-				// draw corners
-				foreach(Corner co in c.polygon)
-				{
-					Vector2 f = camera.getDrawPos(co.position);
-					//GeometryDrawer.fillRect((int)f.X,(int)f.Y,3,3,Color.LightBlue);
-				}
-
-				// draw region centers
-				//GeometryDrawer.fillRect((int)d.X,(int)d.Y,5,5,Color.Blue);
-				Vector2 curr = curRegion.position;
-				curr = camera.getDrawPos(curr);
-				GeometryDrawer.fillRect((int)curr.X,(int)curr.Y,5,5,Color.Red);
-			}
 
 			foreach( Entity entity in world.getDrawableEntities() )
 			{
@@ -197,6 +138,10 @@ namespace straat.View.Screen
 			if( input.pop( InputCommand.SCROLL_UP ) ) 	camera.ZoomIn();
 			if( input.pop( InputCommand.SCROLL_DOWN ) ) camera.ZoomOut();
 		
+
+			// debug
+			if(input.pop(InputCommand.C)) mapDrawer.drawVoronoiCenters = !mapDrawer.drawVoronoiCenters;
+			if(input.pop(InputCommand.E)) mapDrawer.drawVoronoiEdges = !mapDrawer.drawVoronoiEdges;
 		
 			// get mouse position
 			int x = input.pointerEvent.X;

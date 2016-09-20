@@ -69,6 +69,7 @@
     <Compile Include="Model\AI\MovementComponent.cs" />
     <Compile Include="Model\Map\MapBuilder.cs" />
     <Compile Include="Model\Map\Map.cs" />
+    <Compile Include="View\Drawing\MapDrawer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">

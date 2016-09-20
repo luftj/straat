@@ -57,7 +57,17 @@ namespace straat
 			// todo: draw content
 			screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id, drawPos, Color.White );
 			drawPos.Y += 20;
-			screenManager.game.spriteBatch.DrawString(font,"List _S_quads",drawPos,Color.White);
+			screenManager.game.spriteBatch.DrawString(font,"S: List squads",drawPos,Color.White);
+
+
+			// debug
+			drawPos.Y += 20;
+			drawPos.Y += 20;
+			screenManager.game.spriteBatch.DrawString(font,"C: draw region centers",drawPos,Color.White);
+			drawPos.Y += 20;
+			screenManager.game.spriteBatch.DrawString(font,"E: draw region edges",drawPos,Color.White);
+			drawPos.Y += 20;
+			screenManager.game.spriteBatch.DrawString(font,"...",drawPos,Color.White);
 
 
 

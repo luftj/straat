@@ -28,7 +28,17 @@ namespace straat.Model
 			BenTools.Mathematics.VoronoiGraph voronoiGraph = mapBuilder.createVoronoiGraph();
 			map = mapBuilder.buildMapFromGraph( voronoiGraph );
 
-			mapBuilder.applyElevation(map);
+			mapBuilder.applyElevation();
+			mapBuilder.normaliseElevation();
+//			mapBuilder.raiseElevation( -0.2f );
+//			mapBuilder.normaliseElevation();
+
+			mapBuilder.smoothenMinima( 0.5f, 1.0f );
+			mapBuilder.smoothenMinima( 0.4f, 0.6f );
+			mapBuilder.smoothenMinima( 0.1f, 0.3f );
+
+			mapBuilder.raiseElevation( -0.2f );
+			mapBuilder.normaliseElevation();
 
 			//mapBuilder.applyRivers(map);
 		}
