@@ -181,6 +181,17 @@ namespace straat
 			}
 		}
 
+		public void applyCone(float max)
+		{
+			foreach(Center c in map.centers.Values)
+			{
+				float length = ( c.position.Length() );
+				float factor = length/(dimensions/2);
+				c.elevation = 1-(max * factor);
+			}
+			maxElevation = max;
+		}
+
 		public void drawCenterRidge(Center start, float direction, float startElevation, float branchProbability, HashSet<string> bt = null)
 		{
 			// walk outwards
@@ -417,6 +428,8 @@ namespace straat
 
 				curC = curC.drain;
 			}
+			if( river.path.Count <= 1 )
+				return;
 			map.rivers.Add( river );
 		}
 	}

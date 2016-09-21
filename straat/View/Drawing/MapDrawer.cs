@@ -47,7 +47,12 @@ namespace straat.View.Drawing
 				Color Bc = elevationColourMap( c.touches.ElementAt( 1 ).elevation );
 				Color Cc = elevationColourMap( c.touches.ElementAt( 2 ).elevation );
 
+				Color colAspect = aspectBasedShading( c.aspect );
+				Color colDiff = diffuseReflection( c.surfaceNormal );
+
 				GeometryDrawer.fillTriangleGradient(A,B,C,Ac,Bc,Cc);
+//				GeometryDrawer.fillTriangleGradient(A,B,C,colAspect,colAspect,colAspect);
+//				GeometryDrawer.fillTriangleGradient(A,B,C,colDiff,colDiff,colDiff);
 
 				if( drawDelaunayEdges )
 				{
@@ -164,6 +169,33 @@ namespace straat.View.Drawing
 
 			// mountains 0.5 - 0.9
 			return Color.Lerp(Color.LightSlateGray,Color.DarkSlateGray,(elevation-0.5f)*1.0f/0.4f);
+		}
+
+		public Color aspectBasedShading(float aspect)
+		{
+			float azimuth = (float)Math.PI * 3.0f / 4.0f;	// light comes from north-west
+
+			float value = (float)Math.Abs(Math.Cos(( aspect - azimuth )));
+
+//			value += (float)Math.PI;
+//			value /= (float)(Math.PI * 2.0 + 12.0);
+
+			//value = (float)(( (double)value + Math.PI ) / ( Math.PI * 2.0 ));
+
+			return Color.Lerp( Color.White, Color.Black, value );
+		}
+
+		public Color diffuseReflection(Vector3 normal)
+		{
+			Vector3 light = new Vector3( 1, 1, -1 );
+			light.Normalize();
+
+			double dot = Vector3.Dot( normal, light );
+			double angle = Math.Acos( dot);
+
+			float value = (float)( angle /Math.PI);
+
+			return Color.Lerp( Color.White, Color.Black, value );
 		}
 	}
 }

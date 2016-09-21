@@ -223,9 +223,13 @@ namespace straat
 		public Vector3 surfaceNormal{get{
 				if( touches.Count < 3 )
 					return Vector3.UnitZ;
-				
-				Vector3 a = new Vector3( touches.ElementAt(0).position, touches.ElementAt(0).elevation );
-				Vector3 b = new Vector3( touches.ElementAt(1).position, touches.ElementAt(1).elevation );
+
+				Vector2 au = touches.ElementAt( 0 ).position;
+				au.Normalize();
+				Vector2 bu = touches.ElementAt( 1 ).position;
+				bu.Normalize();
+				Vector3 a = new Vector3( au, touches.ElementAt(0).elevation );
+				Vector3 b = new Vector3( bu, touches.ElementAt(1).elevation );
 
 				Vector3 N = Vector3.Cross( a, b );
 				N.Normalize();
@@ -240,6 +244,9 @@ namespace straat
 		public float angle {get{ return (float)Math.Acos( Vector3.Dot( surfaceNormal, Vector3.UnitZ ) );}}
 
 		public float slope {get{return (float)Math.Tan(angle);}}
+
+		public float aspect{get{ return (float)Math.Abs( Math.Atan2( surfaceNormal.X, surfaceNormal.Y ) );
+			}}
 
 		public Corner()
 		{

@@ -25,10 +25,14 @@ namespace straat.View.Screen
 		string statusmsg = "";
 		float status = 0.0f;
 
+		MapDrawer mapDrawer = null;
+		Camera cam;
+
 		public LoadingScreen(ScreenManager screenManager, Rectangle bounds)
 		{
 			this.screenManager = screenManager;
 			viewport = new Viewport( bounds );
+			cam = new Camera( viewport.Bounds );
 		}
 
 
@@ -53,7 +57,13 @@ namespace straat.View.Screen
 		{
 			world = new World();
 			statusmsg+="initialising mapbuilder...\n";
-			world.mapBuilder = new MapBuilder( 2048.0f, 4096, 256.0f  , 4231337 );
+
+			float dimension = 2048.0f;
+			cam.zoomFactor /= 2.0f;
+			cam.position -= new Vector2( dimension / 2.0f );
+			cam.position.X -= viewport.Width / 2.0f;
+
+			world.mapBuilder = new MapBuilder( dimension, 4096, 256.0f, 4231337 );
 			status = 0.125f;
 
 			statusmsg+="generating Voronoi graph...\n";
@@ -62,6 +72,7 @@ namespace straat.View.Screen
 			
 			statusmsg+="converting Voronoi graph...\n";
 			world.map = world.mapBuilder.buildMapFromGraph( voronoiGraph );
+			mapDrawer = new MapDrawer( screenManager.game, world.map );
 			status = 0.375f;
 			statusmsg += "fixing Holes...\n";
 			world.mapBuilder.fixHoles();
@@ -69,6 +80,7 @@ namespace straat.View.Screen
 
 			statusmsg+="applying Elevation..\n";
 			world.mapBuilder.applyElevation();
+//			world.mapBuilder.applyCone(1.0f);
 			status = 0.625f;
 			statusmsg+="normalising Elevation...\n";
 			world.mapBuilder.normaliseElevation();
@@ -85,11 +97,13 @@ namespace straat.View.Screen
 			//mapBuilder.smoothenMinima( 0.4f, 0.6f );
 			//mapBuilder.smoothenMinima( 0.1f, 0.3f );
 
-
+			mapDrawer.drawRivers = false;
 			statusmsg+="drawing rivers\n";
 			world.mapBuilder.applyRivers();
+			mapDrawer.drawRivers = true;
 
 			status = 1.0f;
+			Thread.Sleep(2000);
 			done = true;
 		}
 
@@ -122,7 +136,15 @@ namespace straat.View.Screen
 			screenManager.game.spriteBatch.Begin();
 
 
+			screenManager.game.GraphicsDevice.Clear(Color.DarkBlue);
+			if( mapDrawer != null )
+			{
+				mapDrawer.Draw( cam );
+			}
+
 			Vector2 drawPos = new Vector2( 20, 20 );
+			screenManager.game.spriteBatch.DrawString( font, "Behold the fancy loading screen!", drawPos, Color.Red );
+			drawPos.Y += 50;
 			screenManager.game.spriteBatch.DrawString( font, statusmsg, drawPos, Color.White );
 
 			int maxWidth = viewport.Width - 50;
