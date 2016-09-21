@@ -19,7 +19,7 @@ namespace straat.View.Screen
 		Picker picker;
 
 		Camera camera;
-		World world;
+		public World world;
 		Entity selection;
 
 		MapDrawer mapDrawer;
@@ -40,16 +40,15 @@ namespace straat.View.Screen
 			camera = new Camera( bounds );
 
 
-			world = new World();
+//			world = new World();
 
 
-			mapDrawer = new MapDrawer(screenManager.game,world.map);
 		}
 
 		public void Initialize()
 		{
 			//
-
+			mapDrawer = new MapDrawer(screenManager.game,world.map);
 		}
 
 		public void LoadContent()

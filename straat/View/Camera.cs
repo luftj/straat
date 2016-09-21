@@ -10,6 +10,7 @@ namespace straat.View
     public class Camera
     {
         public Vector2 position;
+		// todo: set origin to viewport center (so zooming happens concentrically)
         public float zoomFactor;
 		private float zoomStep = 2.0f;
 		Rectangle viewport;

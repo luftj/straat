@@ -70,6 +70,7 @@
     <Compile Include="Model\Map\MapBuilder.cs" />
     <Compile Include="Model\Map\Map.cs" />
     <Compile Include="View\Drawing\MapDrawer.cs" />
+    <Compile Include="View\Screen\LoadingScreen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">

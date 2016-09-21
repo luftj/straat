@@ -5,11 +5,16 @@ using System.Linq;
 
 namespace straat
 {
-	public class Center
+	public class Site
+	{
+		public Vector2 position;
+	}
+
+	public class Center : Site
 	{
 		private static int idC = 0;
 		public int id { get;}
-		public Vector2 position;
+//		public Vector2 position;
 
 		// todo: use properties for redundant information, not seperate collections
 		#region graph
@@ -119,7 +124,9 @@ namespace straat
 				neighbours.Add( c );
 		}
 
-		// don't use this! hashes not unique
+		/// <summary>
+		///  don't use this! hashes not unique - use hashString() instead
+		/// </summary>
 		public override int GetHashCode()
 		{
 			//return 0;
@@ -167,11 +174,11 @@ namespace straat
 		}
 	}
 
-	public class Corner
+	public class Corner : Site
 	{
 		private static int idC = 0;
 		public int id { get;}
-		public Vector2 position;
+//		public Vector2 position;
 
 		#region graph
 		public List<Center> touches;// { get;}
@@ -230,8 +237,9 @@ namespace straat
 				return N;
 			}}
 
-		public float slope {get{ return (float)Math.Acos( Vector3.Dot( surfaceNormal, Vector3.UnitZ ) );
-			}}
+		public float angle {get{ return (float)Math.Acos( Vector3.Dot( surfaceNormal, Vector3.UnitZ ) );}}
+
+		public float slope {get{return (float)Math.Tan(angle);}}
 
 		public Corner()
 		{
@@ -262,7 +270,10 @@ namespace straat
 				protrudes.Add( e );
 		}
 
-		// don't use this! hashes not unique
+
+		/// <summary>
+		///  don't use this! hashes not unique - use hashString() instead
+		/// </summary>
 		public override int GetHashCode()
 		{
 			//return 0;
@@ -361,6 +372,34 @@ namespace straat
 				}
 			}
 			return closest;
+		}
+
+		public LinkedList<Center> getCentersSortedByElevation()
+		{
+			LinkedList<Center> ret = new LinkedList<Center>();
+			foreach(Center c in centers.Values)
+			{
+				if( ret.Count == 0 )
+					ret.AddLast( c );
+				else
+				{
+					// find position
+					LinkedListNode<Center> cur = ret.First;
+					while( true )
+					{
+						if( c.elevation < cur.Value.elevation )
+							ret.AddBefore( cur, c );
+						else if(cur == ret.Last)
+						{
+							ret.AddLast(c);
+							break;
+						}
+						else
+							cur = cur.Next;
+					}
+				}
+			}
+			return ret;
 		}
 	}
 }

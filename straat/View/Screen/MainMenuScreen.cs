@@ -110,16 +110,17 @@ namespace straat.View.Screen
 				switch( selectedEntry )
 				{
 				case 0:
-					// split screen vertically in two halves
-					Rectangle a = viewport.Bounds;
-					a.Width /= 3;
-					a.Width *= 2;
-					Rectangle b = a;
-					b.X += a.Width;
-
-					// goto main game setup
-					screenManager.activateScreen( new GameScreen( screenManager, a ) );
-					screenManager.activateScreen( new MainInterfaceScreen( screenManager, b ) );
+					screenManager.activateScreen( new LoadingScreen( screenManager, viewport.Bounds ) );
+//					// split screen vertically in two halves
+//					Rectangle a = viewport.Bounds;
+//					a.Width /= 3;
+//					a.Width *= 2;
+//					Rectangle b = a;
+//					b.X += a.Width;
+//
+//					// goto main game setup
+//					screenManager.activateScreen( new GameScreen( screenManager, a ) );
+//					screenManager.activateScreen( new MainInterfaceScreen( screenManager, b ) );
 					screenManager.deactivateScreen( this );
 					break;
 				case 1:
