@@ -33,17 +33,17 @@ namespace straat.View
 
 		public Vector2 getDrawPos(Vector2 worldPos)
 		{
-			return worldPos - position;
+			return (worldPos - position)*zoomFactor;
 		}
 
 		public Vector2 getWorldPos(Vector2 drawPos)
 		{
-			return drawPos + position;
+			return drawPos/zoomFactor + position;
 		}
 
-		public bool isInBounds(Point p)
+		public bool isInBounds(Vector2 p)
 		{
-			return viewport.Contains( p - position.ToPoint() + viewport.Location);
+			return viewport.Contains( getDrawPos(p).ToPoint() + viewport.Location);
 		}
 
 		public bool isInBounds(Rectangle r)

@@ -67,7 +67,7 @@ namespace straat
 			drawPos.Y += 20;
 			screenManager.game.spriteBatch.DrawString(font,"E: draw region edges",drawPos,Color.White);
 			drawPos.Y += 20;
-			screenManager.game.spriteBatch.DrawString(font,"...",drawPos,Color.White);
+			screenManager.game.spriteBatch.DrawString(font,"D: draw delaunay graph",drawPos,Color.White);
 
 
 

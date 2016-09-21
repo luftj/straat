@@ -19,6 +19,7 @@ namespace straat.Control
         SELECT,
 		A,
 		C,
+		D,
 		E,
 		// ...
 		S,
@@ -147,6 +148,7 @@ namespace straat.Control
 			keyBindings.Add( Keys.PageDown, InputCommand.SCROLL_DOWN );
 
 			keyBindings.Add( Keys.C, InputCommand.C );
+			keyBindings.Add( Keys.D, InputCommand.D );
 			keyBindings.Add( Keys.E, InputCommand.E );
 
 

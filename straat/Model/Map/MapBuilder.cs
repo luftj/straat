@@ -15,6 +15,7 @@ namespace straat
 //				return instance;
 //			}}
 
+		public int seed{ get;}
 		Random rng;
 
 		#region params
@@ -28,9 +29,16 @@ namespace straat
 		public MapBuilder(float dimensions,int numberOfRegions,float maxElevation, int? seed = null)
 		{
 			if( seed == null )
+			{
 				rng = new Random();
+				this.seed = rng.Next();
+			}
 			else
-				rng = new Random((int)seed);
+			{
+				this.seed = (int)seed;
+			}
+			rng = new Random( this.seed );
+			BenTools.Mathematics.MathTools.R = new Random( this.seed );
 
 			this.dimensions = dimensions;
 			this.numberOfRegions = numberOfRegions;
@@ -69,8 +77,8 @@ namespace straat
 				cornerA.position = new Vector2( (float)edge.VVertexA[0], (float)edge.VVertexA[1] );
 				Corner cornerB = new Corner();
 				cornerB.position = new Vector2( (float)edge.VVertexB[0], (float)edge.VVertexB[1] );
-				int hashA = cornerA.GetHashCode();
-				int hashB = cornerB.GetHashCode();
+				string hashA = cornerA.hashString();
+				string hashB = cornerB.hashString();
 				if( ret.corners.ContainsKey( hashA ) )
 					cornerA = ret.corners[hashA];
 				else
@@ -81,8 +89,8 @@ namespace straat
 				else
 					ret.corners.Add( hashB, cornerB );
 
-				cornerA.adjacent.Add( cornerB );
-				cornerB.adjacent.Add( cornerA );
+				cornerA.addAdjacent( cornerB );
+				cornerB.addAdjacent( cornerA );
 
 				VDEdge vEdge = new VDEdge();
 
@@ -99,15 +107,21 @@ namespace straat
 				Center centerB = new Center();
 				centerB.position = new Vector2( (float)edge.RightData[0], (float)edge.RightData[1] );
 
-				int hashcA = centerA.GetHashCode();
-				int hashcB = centerB.GetHashCode();
+				string hashcA = centerA.hashString();
+				string hashcB = centerB.hashString();
 				if( ret.centers.ContainsKey( hashcA ) )
+				{
+					System.Console.WriteLine("Hash hit: "+ret.centers[hashcA].id+ret.centers[hashcA].position.ToString()+" | "+centerA.position.ToString()+" -- "+ret.centers[hashcA].Equals(centerA));
 					centerA = ret.centers[hashcA];
+				}
 				else
 					ret.centers.Add( hashcA, centerA );
 
 				if( ret.centers.ContainsKey( hashcB ) )
+				{
+					System.Console.WriteLine("Hash hit: "+ret.centers[hashcB].id+ret.centers[hashcB].position.ToString()+" | "+centerB.position.ToString()+" -- "+ret.centers[hashcB].Equals(centerB));
 					centerB = ret.centers[hashcB];
+				}
 				else
 					ret.centers.Add( hashcB, centerB );
 
@@ -124,24 +138,24 @@ namespace straat
 				//vEdge.dual = dEdge;
 				//dEdge.dual = vEdge;
 
-				cornerA.touches.Add( centerA );
-				cornerA.touches.Add( centerB );
-				cornerB.touches.Add( centerA );
-				cornerA.touches.Add( centerA );
+				cornerA.addTouching( centerA );
+				cornerA.addTouching( centerB );
+				cornerB.addTouching( centerA );
+				cornerA.addTouching( centerA );
 
-				cornerA.protrudes.Add( vEdge );
-				cornerB.protrudes.Add( vEdge );
+				cornerA.addProtruding( vEdge );
+				cornerB.addProtruding( vEdge );
 
 
 				vEdge.joins.Add( centerA );
 				vEdge.joins.Add( centerB );
 
 
-				centerA.borders.Add( vEdge );
-				centerB.borders.Add( vEdge );
+				centerA.addBordering( vEdge );
+				centerB.addBordering( vEdge );
 
-				centerA.neighbours.Add( centerB );
-				centerB.neighbours.Add( centerA );
+				centerA.addNeighbour( centerB );
+				centerB.addNeighbour( centerA );
 
 				// todo: delaunay missing
 
@@ -165,21 +179,21 @@ namespace straat
 			}
 		}
 
-		public void drawCenterRidge(Center start, float direction, float startElevation, float branchProbability, HashSet<int> bt = null)
+		public void drawCenterRidge(Center start, float direction, float startElevation, float branchProbability, HashSet<string> bt = null)
 		{
 			// walk outwards
 
 			List<Center> ridge = new List<Center>();
-			HashSet<int> beenThere = bt;
+			HashSet<string> beenThere = bt;
 			if( bt == null )
-				beenThere = new HashSet<int>();
+				beenThere = new HashSet<string>();
 			Center curC = start;
 
 
 			while(true)
 			{
 				ridge.Add(curC);
-				beenThere.Add(curC.GetHashCode());
+				beenThere.Add(curC.hashString());
 
 				//Vector2 direction = ( curC.position - start.position );
 				float angle = direction;// (float)Math.Atan2( direction.X, direction.Y );
@@ -189,6 +203,9 @@ namespace straat
 				Center minC = null;
 				foreach(Center c in curC.neighbours)
 				{
+					if( c.isEndOfTheWorld )
+						continue;
+
 					Vector2 edge = c.position - curC.position;
 					float cAngle = (float)Math.Atan2( edge.X, edge.Y );
 
@@ -200,7 +217,7 @@ namespace straat
 						minC = c;
 					}
 				}
-				if( !beenThere.Contains( minC.GetHashCode() ) )
+				if( minC != null && !beenThere.Contains( minC.hashString() ) )
 					curC = minC;
 				else
 					break;
@@ -257,7 +274,7 @@ namespace straat
 		}
 			
 		/// <summary>
-		/// Smoothens the minima.
+		/// Smoothens the minima by raising them towards their neighbours average elevation.
 		/// </summary>
 		/// <param name="threshold">Threshold [0,1].</param>
 		/// <param name="factor">Factor [0,1].</param>
@@ -280,6 +297,86 @@ namespace straat
 				if( Math.Abs(greatestDifference) > threshold )
 				{
 					c.elevation = meanElev * factor + c.elevation * ( 1.0f - factor );
+				}
+			}
+		}
+
+		/// <summary>
+		/// Fills the local minima using the Planchon-Darboux algorithm. Assures every point will have a lower neighbour.
+		/// </summary>
+		public void fillMinima()
+		{
+			float minSlope = 0.01f;
+
+			Dictionary<string,float> newElevations = new Dictionary<string, float>();
+
+			foreach(Center c in map.centers.Values)
+			{
+				if( c.isEndOfTheWorld )
+					newElevations.Add( c.hashString(), c.elevation );
+				else
+					newElevations.Add( c.hashString(), float.PositiveInfinity );
+			}
+
+			while(true)
+			{
+				bool change = false;
+				foreach( Center c in map.centers.Values )
+				{
+					if( c.isEndOfTheWorld )
+						continue;
+
+					string index = c.hashString();
+					float lowestNeighbour = float.PositiveInfinity;
+
+					// find neighbouring center with lowest elevation
+					foreach( Center n in c.neighbours )
+					{
+						if( newElevations[n.hashString()] < lowestNeighbour )
+							lowestNeighbour = newElevations[n.hashString()];
+					}
+					// can't do anything here yet
+					if( lowestNeighbour == float.PositiveInfinity )
+						continue;
+
+					float oldValue = newElevations[index];
+
+					float newValue = Math.Max( lowestNeighbour + minSlope, c.elevation );
+
+					if( newValue != oldValue )
+					{
+						newElevations[index] = newValue;
+						change = true;
+					}
+				}
+				if( !change )
+					break;
+			}
+
+			foreach(KeyValuePair<string,float> item in newElevations)
+			{
+				map.centers[item.Key].elevation = item.Value;
+			}
+			
+		}
+
+		public void fixHoles()
+		{
+			foreach(Corner c in map.corners.Values)
+			{
+				if(c.touches.Count==2)
+				{
+					// try to fix
+					HashSet<Center> newTouch = c.touches.ElementAt(0).neighbours;
+					newTouch.Intersect(c.touches.ElementAt(1).neighbours);
+					foreach(Center ce in newTouch)
+					{
+						if(ce.corners.Contains(c))
+						{
+							c.touches.Add( ce );
+							break;
+						}
+					}
 				}
 			}
 		}

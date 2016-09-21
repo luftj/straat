@@ -91,7 +91,7 @@ namespace straat.View.Screen
 
 			#region scene_drawing
 			// draw world
-			screenManager.game.GraphicsDevice.Clear(Color.Magenta);
+			screenManager.game.GraphicsDevice.Clear(Color.DarkBlue);
 			screenManager.game.spriteBatch.Begin();
 
 			mapDrawer.Draw(camera);
@@ -105,14 +105,14 @@ namespace straat.View.Screen
 			foreach( Entity entity in world.getDrawableEntities() )
 			{
 				//  consider screen boundaries
-				if( !camera.isInBounds( entity.worldPos.ToPoint()) ) 					// todo: check for rectangle of texture instead // todo: respect zoom level
+				if( !camera.isInBounds( entity.worldPos) ) 					// todo: check for rectangle of texture instead // todo: respect zoom level
 					continue;
 
 				Vector2 drawingPos = camera.getDrawPos(entity.worldPos);
 
 				// is in view: draw world object
 				Color curCol = entity.getAllegiance() == Allegiance.PLAYER ? Color.Blue : Color.Red;
-				screenManager.game.spriteBatch.Draw(entity.gc.texture,drawingPos,scale:new Vector2(camera.zoomFactor),color:curCol);//null,curCol,0.0f,Vector2.Zero,camera.zoomFactor,SpriteEffects.None,0.0f); // todo: reflect zoom level by scale argument
+				screenManager.game.spriteBatch.Draw(entity.gc.texture,drawingPos,scale:new Vector2(camera.zoomFactor),color:curCol);
 			}
 			#endregion
 
@@ -141,6 +141,7 @@ namespace straat.View.Screen
 
 			// debug
 			if(input.pop(InputCommand.C)) mapDrawer.drawVoronoiCenters = !mapDrawer.drawVoronoiCenters;
+			if(input.pop(InputCommand.D)) mapDrawer.drawDelaunayEdges = !mapDrawer.drawDelaunayEdges;
 			if(input.pop(InputCommand.E)) mapDrawer.drawVoronoiEdges = !mapDrawer.drawVoronoiEdges;
 		
 			// get mouse position
@@ -150,7 +151,8 @@ namespace straat.View.Screen
 			debugtext = "screen: " + x + ", " + y + "\n";
 			debugtext += "world: " + worldPos.X + ", " + worldPos.Y;
 			curRegion = world.map.getRegionAt( worldPos.X, worldPos.Y );
-			debugtext += ", elevation: " + curRegion.elevation;
+			debugtext += ", elevation: " + curRegion.elevation + ", id: "+ curRegion.id + "\n";
+			debugtext += "seed: "+world.mapBuilder.seed;
 
 			// handle clicks
 			if( viewport.Bounds.Contains( x, y ) )

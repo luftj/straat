@@ -23,22 +23,25 @@ namespace straat.Model
 
 			//roadNetwork = MapBuilder.Instance.createRandomRoadNetwork( MapBuilder.Instance.createRandomPoints( 30, 500 ) );
 
-			mapBuilder = new MapBuilder( 1024.0f, 2048, 256.0f );
+			mapBuilder = new MapBuilder( 2048.0f, 4096, 256.0f  , 4231337 );
 
 			BenTools.Mathematics.VoronoiGraph voronoiGraph = mapBuilder.createVoronoiGraph();
 			map = mapBuilder.buildMapFromGraph( voronoiGraph );
+
+			mapBuilder.fixHoles();
 
 			mapBuilder.applyElevation();
 			mapBuilder.normaliseElevation();
 //			mapBuilder.raiseElevation( -0.2f );
 //			mapBuilder.normaliseElevation();
 
-			mapBuilder.smoothenMinima( 0.5f, 1.0f );
-			mapBuilder.smoothenMinima( 0.4f, 0.6f );
-			mapBuilder.smoothenMinima( 0.1f, 0.3f );
+			mapBuilder.fillMinima();
+//						mapBuilder.smoothenMinima( 0.5f, 1.0f );
+//						mapBuilder.smoothenMinima( 0.4f, 0.6f );
+//						mapBuilder.smoothenMinima( 0.1f, 0.3f );
 
-			mapBuilder.raiseElevation( -0.2f );
-			mapBuilder.normaliseElevation();
+//			mapBuilder.raiseElevation( -0.10f );
+//			mapBuilder.normaliseElevation();
 
 			//mapBuilder.applyRivers(map);
 		}

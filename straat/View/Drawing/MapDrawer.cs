@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using System.Linq;
 
 
 namespace straat.View.Drawing
@@ -14,7 +15,10 @@ namespace straat.View.Drawing
 		public bool drawVoronoiEdges = false;
 		public bool drawVoronoiRegions = false;
 		public bool drawVoronoiVertices = false;
+		public bool drawDelaunayEdges = false;
 		public bool drawRivers = true;
+		public bool drawEndOfTheWorld = true;
+		public bool drawTopography = false;
 
 
 		public MapDrawer(Game1 game, Map map)
@@ -25,6 +29,35 @@ namespace straat.View.Drawing
 
 		public void Draw(straat.View.Camera cam)
 		{
+			// iterate over delaunay
+			foreach(Corner c in map.corners.Values)
+			{
+				if( c.touches.Count < 3 )
+					continue;
+
+				if( c.isEndOfTheWorld )
+					continue;
+
+				// draw topography
+				Vector2 A = cam.getDrawPos(c.touches.ElementAt(0).position);
+				Vector2 B = cam.getDrawPos(c.touches.ElementAt(1).position);
+				Vector2 C = cam.getDrawPos(c.touches.ElementAt(2).position);
+
+				Color Ac = elevationColourMap( c.touches.ElementAt( 0 ).elevation );
+				Color Bc = elevationColourMap( c.touches.ElementAt( 1 ).elevation );
+				Color Cc = elevationColourMap( c.touches.ElementAt( 2 ).elevation );
+
+				GeometryDrawer.fillTriangleGradient(A,B,C,Ac,Bc,Cc);
+
+				if( drawDelaunayEdges )
+				{
+					GeometryDrawer.drawLine( A, B, Color.White );
+					GeometryDrawer.drawLine( C, B, Color.White );
+					GeometryDrawer.drawLine( A, C, Color.White );
+				}
+			}
+
+			// iterate over voronoi
 			foreach(Center c in map.centers.Values)
 			{
 				// region center
@@ -32,35 +65,38 @@ namespace straat.View.Drawing
 
 
 
-
-				// polygon nodes
-				List<Point> poly = new List<Point>();
-				List<Color> polyCol = new List<Color>();
-				// draw topography
-				foreach(Corner co in c.polygon)
+				if( drawTopography )
 				{
-					Vector2 f = cam.getDrawPos(co.position);
+					// polygon nodes
+					List<Point> poly = new List<Point>();
+					List<Color> polyCol = new List<Color>();
+					// draw topography
+					// todo: draw delaunay triangles instead
+					foreach( Corner co in c.polygon )
+					{
+						Vector2 f = cam.getDrawPos( co.position );
 
-					if(float.IsInfinity(co.position.Length()))
-						continue;
+						if( float.IsInfinity( co.position.Length() ) )
+							continue;
 
-					poly.Add(f.ToPoint());
+						poly.Add( f.ToPoint() );
 
-					if(co.isOcean)
-						polyCol.Add(Color.DarkBlue);
+						if( co.isOcean )
+							polyCol.Add( Color.DarkBlue );
+						else
+							polyCol.Add( elevationColourMap( co.elevation ) );
+					}
+					Color cCol;
+					if( c.isOcean )
+					{
+						cCol = Color.DarkBlue;
+						GeometryDrawer.fillPoly( poly, cCol );
+					}
 					else
-						polyCol.Add( elevationColourMap(co.elevation));
-				}
-				Color cCol;
-				if(c.isOcean)
-				{
-					cCol = Color.DarkBlue;
-					GeometryDrawer.fillPoly(poly,cCol);
-				}
-				else
-				{
-					cCol = elevationColourMap(c.elevation);
-					GeometryDrawer.fillPolyGradient(d,poly,cCol,polyCol.ToArray());
+					{
+						cCol = elevationColourMap( c.elevation );
+						GeometryDrawer.fillPolyGradient( d, poly, cCol, polyCol.ToArray() );
+					}
 				}
  
 				// draw voronoi edges
@@ -89,16 +125,23 @@ namespace straat.View.Drawing
 				if(drawVoronoiVertices)
 					foreach(Corner co in c.polygon)
 					{
-						Vector2 f = cam.getDrawPos(co.position);
-						GeometryDrawer.fillRect((int)f.X,(int)f.Y,3,3,Color.LightBlue);
+						Point f = cam.getDrawPos(co.position).ToPoint();
+						GeometryDrawer.fillRect(f.X,f.Y,3,3,Color.LightBlue);
 					}
 
 				// draw region centers
-				if(drawVoronoiCenters)
-					GeometryDrawer.fillRect((int)d.X,(int)d.Y,5,5,Color.Blue);
+				if( drawVoronoiCenters )
+				{
+					GeometryDrawer.fillRect( (int)d.X, (int)d.Y, 5, 5, Color.Blue );
+
+					if( drawEndOfTheWorld )
+					if( c.isEndOfTheWorld )
+						GeometryDrawer.fillRect( (int)d.X, (int)d.Y, 5, 5, Color.HotPink );
+				}
 
 			}
-			
+
+
 		}
 
 		public Color elevationColourMap(float elevation)
