@@ -109,18 +109,6 @@ namespace straat.View.Drawing
 						GeometryDrawer.drawLine(a,b,Color.White);
 					}
 
-				// draw river
-				if(drawRivers)
-					foreach(River r in map.rivers)
-					{
-						for(int i = 1;i<r.path.Count;++i)
-						{
-							Vector2 a = cam.getDrawPos(r.path[i-1].position);
-							Vector2 b = cam.getDrawPos(r.path[i].position);
-							GeometryDrawer.drawLine(a,b,Color.Blue);
-						}
-					}
-
 				// draw corners
 				if(drawVoronoiVertices)
 					foreach(Corner co in c.polygon)
@@ -141,7 +129,17 @@ namespace straat.View.Drawing
 
 			}
 
-
+			// draw river
+			if(drawRivers)
+				foreach(River r in map.rivers)
+				{
+					for(int i = 1;i<r.path.Count;++i)
+					{
+						Vector2 a = cam.getDrawPos(r.path[i-1].position);
+						Vector2 b = cam.getDrawPos(r.path[i].position);
+						GeometryDrawer.drawLine(a,b,Color.Blue);
+					}
+				}
 		}
 
 		public Color elevationColourMap(float elevation)

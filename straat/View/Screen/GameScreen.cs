@@ -143,6 +143,7 @@ namespace straat.View.Screen
 			if(input.pop(InputCommand.C)) mapDrawer.drawVoronoiCenters = !mapDrawer.drawVoronoiCenters;
 			if(input.pop(InputCommand.D)) mapDrawer.drawDelaunayEdges = !mapDrawer.drawDelaunayEdges;
 			if(input.pop(InputCommand.E)) mapDrawer.drawVoronoiEdges = !mapDrawer.drawVoronoiEdges;
+			if(input.pop(InputCommand.F)) mapDrawer.drawVoronoiVertices = !mapDrawer.drawVoronoiVertices;
 		
 			// get mouse position
 			int x = input.pointerEvent.X;

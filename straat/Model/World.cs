@@ -43,7 +43,7 @@ namespace straat.Model
 //			mapBuilder.raiseElevation( -0.10f );
 //			mapBuilder.normaliseElevation();
 
-			//mapBuilder.applyRivers(map);
+			mapBuilder.applyRivers();
 		}
 
 		/// <summary>

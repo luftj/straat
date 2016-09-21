@@ -22,6 +22,8 @@ namespace straat
 		float dimensions;
 		int numberOfRegions;
 		public float maxElevation { get; private set;}
+
+		int numberOfRivers = 15;
 		#endregion
 
 		Map map;
@@ -379,6 +381,43 @@ namespace straat
 					}
 				}
 			}
+		}
+
+		public void applyRivers()
+		{
+			int it = numberOfRivers;
+			while(it > 0)
+			{
+				drawRiver();
+				--it;
+			}
+		}
+
+		private void drawRiver()
+		{
+			Center curC = map.centers.Values.ElementAt( rng.Next( map.centers.Count ) );
+			while( curC.elevation < 0.5f )
+				curC = map.centers.Values.ElementAt( rng.Next( map.centers.Count ) );
+			River river = new River();
+
+			while( true )
+			{
+				river.path.Add( curC );
+
+				if( curC.isOcean )
+					break;
+
+				foreach( River r in map.rivers )
+					foreach( Center c in r.path )
+						if( curC.Equals( c ) )
+						{
+							river.flowsInto = r;
+							break;
+						}
+
+				curC = curC.drain;
+			}
+			map.rivers.Add( river );
 		}
 	}
 }

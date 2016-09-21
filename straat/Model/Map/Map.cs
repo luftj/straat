@@ -318,11 +318,15 @@ namespace straat
 
 	public class River
 	{
-		public List<Corner> path;
+		public List<Center> path;
+
+		public River flowsInto;
+
+		//public string name { get;}
 
 		public River()
 		{
-			path = new List<Corner>();
+			path = new List<Center>();
 		}
 	}
 
