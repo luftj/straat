@@ -55,6 +55,8 @@ namespace straat.View.Screen
 
 		private void doThings()
 		{
+			float statusstep = 1.0f/10.0f;
+
 			world = new World();
 			statusmsg+="initialising mapbuilder...\n";
 
@@ -64,34 +66,53 @@ namespace straat.View.Screen
 			cam.position.X -= viewport.Width / 2.0f;
 
 			world.mapBuilder = new MapBuilder( dimension, 4096, 256.0f, 4231337 );
-			status = 0.125f;
+			status = statusstep;
 
 			statusmsg+="generating Voronoi graph...\n";
 			BenTools.Mathematics.VoronoiGraph voronoiGraph = world.mapBuilder.createVoronoiGraph();
-			status = 0.25f;
+			status = statusstep;
 			
 			statusmsg+="converting Voronoi graph...\n";
 			world.map = world.mapBuilder.buildMapFromGraph( voronoiGraph );
 			mapDrawer = new MapDrawer( screenManager.game, world.map );
-			status = 0.375f;
+			status = statusstep;
 			statusmsg += "fixing Holes...\n";
 			world.mapBuilder.fixHoles();
-			status = 0.5f;
+			status = statusstep;
 
 			statusmsg+="applying Elevation..\n";
 			world.mapBuilder.applyElevation();
-//			world.mapBuilder.applyCone(1.0f);
-			status = 0.625f;
+			//			world.mapBuilder.applyCone(1.0f);
+			status = statusstep;
+
 			statusmsg+="normalising Elevation...\n";
 			world.mapBuilder.normaliseElevation();
-			status = 0.75f;
+			status = statusstep;
+
+
 
 			//mapBuilder.raiseElevation( -0.2f );
 			//mapBuilder.normaliseElevation();
 
 			statusmsg+="filling local minima...\n";
 			world.mapBuilder.fillMinima();
-			status += 0.125f;
+			status = statusstep;
+
+			Thread.Sleep(2000);
+			statusmsg+="smoothening elevation...\n";
+			world.mapBuilder.smoothen();
+			world.mapBuilder.smoothen();
+			status = statusstep;
+			Thread.Sleep(2000);
+
+
+			statusmsg+="filling local minima...\n";
+			world.mapBuilder.fillMinima();
+			status = statusstep;
+
+			statusmsg+="normalising Elevation...\n";
+			world.mapBuilder.normaliseElevation();
+			status = statusstep;
 
 			//mapBuilder.smoothenMinima( 0.5f, 1.0f );
 			//mapBuilder.smoothenMinima( 0.4f, 0.6f );

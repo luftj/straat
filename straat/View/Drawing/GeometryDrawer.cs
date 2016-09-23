@@ -57,6 +57,8 @@ namespace straat.View.Drawing
 
         public static void drawLine(Vector2 A, Vector2 B, Color colour)
         {
+			// todo: implement line styles (thickness, ...)
+
             Vector3 a = new Vector3( A, 0);
             Vector3 b = new Vector3( B, 0);
             VertexPositionColor[] vertices = { new VertexPositionColor(a, colour), 

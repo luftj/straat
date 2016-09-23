@@ -8,6 +8,13 @@ namespace straat.View.Drawing
 {
 	public class MapDrawer
 	{
+		enum SHADING
+		{
+			TOPOGRAPHIC,
+			DIFFUSE,
+			ASPECT,
+		}
+
 		Game1 game;
 		Map map;
 
@@ -19,6 +26,7 @@ namespace straat.View.Drawing
 		public bool drawRivers = true;
 		public bool drawEndOfTheWorld = true;
 		public bool drawTopography = false;
+		SHADING shadingStyle = SHADING.TOPOGRAPHIC;
 
 
 		public MapDrawer(Game1 game, Map map)
@@ -43,16 +51,24 @@ namespace straat.View.Drawing
 				Vector2 B = cam.getDrawPos(c.touches.ElementAt(1).position);
 				Vector2 C = cam.getDrawPos(c.touches.ElementAt(2).position);
 
-				Color Ac = elevationColourMap( c.touches.ElementAt( 0 ).elevation );
-				Color Bc = elevationColourMap( c.touches.ElementAt( 1 ).elevation );
-				Color Cc = elevationColourMap( c.touches.ElementAt( 2 ).elevation );
-
-				Color colAspect = aspectBasedShading( c.aspect );
-				Color colDiff = diffuseReflection( c.surfaceNormal );
-
-				GeometryDrawer.fillTriangleGradient(A,B,C,Ac,Bc,Cc);
-//				GeometryDrawer.fillTriangleGradient(A,B,C,colAspect,colAspect,colAspect);
-//				GeometryDrawer.fillTriangleGradient(A,B,C,colDiff,colDiff,colDiff);
+				switch(shadingStyle)
+				{
+				case SHADING.ASPECT:
+					Color colAspect = aspectBasedShading( c.aspect );
+					GeometryDrawer.fillTriangleGradient( A, B, C, colAspect, colAspect, colAspect );
+					break;
+				case SHADING.DIFFUSE:
+					Color colDiff = diffuseReflection( c.surfaceNormal );
+					GeometryDrawer.fillTriangleGradient( A, B, C, colDiff, colDiff, colDiff );
+					break;
+				default:
+				case SHADING.TOPOGRAPHIC:
+					Color Ac = elevationColourMap( c.touches.ElementAt( 0 ).elevation );
+					Color Bc = elevationColourMap( c.touches.ElementAt( 1 ).elevation );
+					Color Cc = elevationColourMap( c.touches.ElementAt( 2 ).elevation );
+					GeometryDrawer.fillTriangleGradient( A, B, C, Ac, Bc, Cc );
+					break;
+				}
 
 				if( drawDelaunayEdges )
 				{
@@ -67,8 +83,6 @@ namespace straat.View.Drawing
 			{
 				// region center
 				Vector2 d = cam.getDrawPos(c.position);
-
-
 
 				if( drawTopography )
 				{
@@ -97,6 +111,8 @@ namespace straat.View.Drawing
 						cCol = Color.DarkBlue;
 						GeometryDrawer.fillPoly( poly, cCol );
 					}
+					else if( c.isLake )
+						GeometryDrawer.fillPoly( poly, Color.Blue );
 					else
 					{
 						cCol = elevationColourMap( c.elevation );

@@ -23,7 +23,7 @@ namespace straat
 		int numberOfRegions;
 		public float maxElevation { get; private set;}
 
-		int numberOfRivers = 15;
+		int numberOfRivers = 30;
 		#endregion
 
 		Map map;
@@ -258,10 +258,6 @@ namespace straat
 			}
 		}
 
-		public void drawCornerRidge()
-		{
-			
-		}
 
 		public void normaliseElevation()
 		{
@@ -286,6 +282,32 @@ namespace straat
 			maxElevation += amount;
 		}
 			
+
+		public void smoothen()
+		{
+			float maxValue = float.NegativeInfinity;
+			Dictionary<string,float> newElevations = new Dictionary<string, float>();
+			foreach(Center c in map.centers.Values)
+			{
+				// simple filter
+				float average = 0.0f;
+				foreach(Center n in c.neighbours)
+				{
+					average += n.elevation;
+				}
+				average += c.elevation * c.neighbours.Count;
+				average /= (float)(c.neighbours.Count+1);
+				if( average > maxValue )
+					maxValue = average;
+				newElevations.Add(c.hashString(),average);
+			}
+			maxElevation = maxValue;
+			foreach(KeyValuePair<string,float> item in newElevations)
+			{
+				map.centers[item.Key].elevation = item.Value;
+			}
+		}
+
 		/// <summary>
 		/// Smoothens the minima by raising them towards their neighbours average elevation.
 		/// </summary>
@@ -418,19 +440,35 @@ namespace straat
 				if( curC.isOcean )
 					break;
 
+				bool mounded = false;
 				foreach( River r in map.rivers )
+				{
 					foreach( Center c in r.path )
 						if( curC.Equals( c ) )
 						{
 							river.flowsInto = r;
+							mounded = true;
 							break;
 						}
+					if( mounded )
+						break;
+				}
+				if( mounded )
+					break;
+				
+				if( curC.elevation == curC.drain.elevation )
+					curC.isLake = true;
 
 				curC = curC.drain;
 			}
 			if( river.path.Count <= 1 )
 				return;
 			map.rivers.Add( river );
+		}
+	
+		private void calculateSettlementInterestFxn()
+		{
+			
 		}
 	}
 }

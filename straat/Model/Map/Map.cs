@@ -48,6 +48,8 @@ namespace straat
 				return false;
 			}}
 
+		public bool isLake = false;
+
 		public bool isEndOfTheWorld{get{
 				foreach( Corner c in corners )
 					if( c.isEndOfTheWorld )
@@ -63,7 +65,7 @@ namespace straat
 				foreach(Center n in neighbours)
 				{
 					float nSlope = n.elevation - elevation;
-					if( nSlope < slope )
+					if( nSlope <= slope )
 					{
 						slope = nSlope;
 						ret = n;

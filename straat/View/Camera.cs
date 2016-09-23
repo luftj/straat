@@ -44,11 +44,14 @@ namespace straat.View
 
 		public bool isInBounds(Vector2 p)
 		{
+			// todo: respect zoom level
 			return viewport.Contains( getDrawPos(p).ToPoint() + viewport.Location);
 		}
 
 		public bool isInBounds(Rectangle r)
 		{
+			// todo: respect zoom level
+
 			// assumes viewport is always bigger than r in every dimension
 			//check every corner of the given rectangle
 			Rectangle tmp = r;

@@ -38,11 +38,6 @@ namespace straat.View.Screen
 			picker = new Picker( screenManager.game, bounds.Width, bounds.Height );
 
 			camera = new Camera( bounds );
-
-
-//			world = new World();
-
-
 		}
 
 		public void Initialize()
@@ -80,13 +75,12 @@ namespace straat.View.Screen
 			{
 				//  consider screen boundaries
 				Vector2 drawingPos = camera.getDrawPos(entity.worldPos);
-//				if( !camera.isInBounds( drawingPos.ToPoint() ) )					// todo: check for rectangle of texture instead // todo: respect zoom level
+//				if( !camera.isInBounds( drawingPos.ToPoint() ) )					// todo: check for rectangle of texture instead 
 //					continue;
 				picker.Add( entity, entity.gc.texture, drawingPos );
 			}
 			picker.End();
 			#endregion
-
 
 			#region scene_drawing
 			// draw world
@@ -104,7 +98,7 @@ namespace straat.View.Screen
 			foreach( Entity entity in world.getDrawableEntities() )
 			{
 				//  consider screen boundaries
-				if( !camera.isInBounds( entity.worldPos) ) 					// todo: check for rectangle of texture instead // todo: respect zoom level
+				if( !camera.isInBounds( entity.worldPos) ) 					// todo: check for rectangle of texture instead
 					continue;
 
 				Vector2 drawingPos = camera.getDrawPos(entity.worldPos);
