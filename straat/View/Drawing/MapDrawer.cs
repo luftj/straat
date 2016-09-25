@@ -8,11 +8,14 @@ namespace straat.View.Drawing
 {
 	public class MapDrawer
 	{
-		enum SHADING
+		public enum SHADING
 		{
 			TOPOGRAPHIC,
 			DIFFUSE,
 			ASPECT,
+			HILL,
+
+			NUM_SHADINGTYPES
 		}
 
 		Game1 game;
@@ -26,13 +29,15 @@ namespace straat.View.Drawing
 		public bool drawRivers = true;
 		public bool drawEndOfTheWorld = true;
 		public bool drawTopography = false;
-		SHADING shadingStyle = SHADING.TOPOGRAPHIC;
+		public SHADING shadingStyle {get;private set;}
 
 
 		public MapDrawer(Game1 game, Map map)
 		{
 			this.game = game;
 			this.map = map;
+
+			shadingStyle = SHADING.TOPOGRAPHIC;
 		}
 
 		public void Draw(straat.View.Camera cam)
@@ -60,6 +65,10 @@ namespace straat.View.Drawing
 				case SHADING.DIFFUSE:
 					Color colDiff = diffuseReflection( c.surfaceNormal );
 					GeometryDrawer.fillTriangleGradient( A, B, C, colDiff, colDiff, colDiff );
+					break;
+				case SHADING.HILL:
+					Color colHill = hillShading( c );
+					GeometryDrawer.fillTriangleGradient( A, B, C, colHill, colHill, colHill );
 					break;
 				default:
 				case SHADING.TOPOGRAPHIC:
@@ -170,7 +179,7 @@ namespace straat.View.Drawing
 				return Color.DarkBlue;
 
 			if( elevation < 0.1f )
-				return Color.Lerp( Color.DarkBlue, Color.Beige, elevation * 10.0f );
+				return Color.Lerp( Color.Ivory, Color.ForestGreen, elevation * 10.0f );
 
 
 			// snowy hilltops 0.9-1.0
@@ -191,7 +200,9 @@ namespace straat.View.Drawing
 		{
 			float azimuth = (float)Math.PI * 3.0f / 4.0f;	// light comes from north-west
 
-			float value = (float)Math.Abs(Math.Cos(( aspect - azimuth )));
+			float theta = aspect - azimuth;
+
+			float value = (float)Math.Abs(Math.Cos(( theta )));
 
 //			value += (float)Math.PI;
 //			value /= (float)(Math.PI * 2.0 + 12.0);
@@ -212,6 +223,27 @@ namespace straat.View.Drawing
 			float value = (float)( angle /Math.PI);
 
 			return Color.Lerp( Color.White, Color.Black, value );
+		}
+
+		public Color hillShading(Corner roi)
+		{
+			float S = roi.angle;
+			float A = roi.aspect;
+
+			float I = (float)Math.PI * 3.0f / 4.0f;
+			float D = (float)Math.PI / 4.0f;
+
+			float BV = (float)(Math.Cos( I ) * Math.Sin( S ) * Math.Cos(Math.Abs(A - D )) + Math.Sin( I ) * Math.Cos( S ));
+
+			return Color.Lerp( Color.White, Color.Black, BV );
+		}
+
+		public void cycleShading()
+		{
+			if( (int)shadingStyle == (int)SHADING.NUM_SHADINGTYPES - 1 )
+				shadingStyle = 0;
+			else
+				++shadingStyle;
 		}
 	}
 }

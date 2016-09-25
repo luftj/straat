@@ -468,7 +468,12 @@ namespace straat
 	
 		private void calculateSettlementInterestFxn()
 		{
-			
+			Dictionary<string,float> interestFxn = new Dictionary<string, float>();
+
+			foreach(KeyValuePair<string,Center> item in map.centers)
+			{
+				
+			}
 		}
 	}
 }

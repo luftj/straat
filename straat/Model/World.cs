@@ -14,7 +14,8 @@ namespace straat.Model
 		public List<Crossing> roadNetwork;
 
 		public Map map;
-		public MapBuilder mapBuilder;
+
+		public int seed;
 
 
 		public World()

@@ -137,6 +137,7 @@ namespace straat.View.Screen
 			if(input.pop(InputCommand.D)) mapDrawer.drawDelaunayEdges = !mapDrawer.drawDelaunayEdges;
 			if(input.pop(InputCommand.E)) mapDrawer.drawVoronoiEdges = !mapDrawer.drawVoronoiEdges;
 			if(input.pop(InputCommand.F)) mapDrawer.drawVoronoiVertices = !mapDrawer.drawVoronoiVertices;
+			if( input.pop( InputCommand.G ) ) mapDrawer.cycleShading();
 		
 			// get mouse position
 			int x = input.pointerEvent.X;
@@ -146,7 +147,8 @@ namespace straat.View.Screen
 			debugtext += "world: " + worldPos.X + ", " + worldPos.Y;
 			curRegion = world.map.getRegionAt( worldPos.X, worldPos.Y );
 			debugtext += ", elevation: " + curRegion.elevation + ", id: "+ curRegion.id + "\n";
-			debugtext += "seed: "+world.mapBuilder.seed;
+			debugtext += "seed: " + world.seed + "\n";
+			debugtext += mapDrawer.shadingStyle.ToString();
 
 			// handle clicks
 			if( viewport.Bounds.Contains( x, y ) )

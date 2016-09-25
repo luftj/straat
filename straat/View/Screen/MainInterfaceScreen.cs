@@ -70,7 +70,8 @@ namespace straat
 			screenManager.game.spriteBatch.DrawString(font,"E: draw region edges",drawPos,Color.White);
 			drawPos.Y += 20;
 			screenManager.game.spriteBatch.DrawString(font,"F: draw region vertices",drawPos,Color.White);
-
+			drawPos.Y += 20;
+			screenManager.game.spriteBatch.DrawString(font,"G: change shading style",drawPos,Color.White);
 
 
 			screenManager.game.spriteBatch.End();

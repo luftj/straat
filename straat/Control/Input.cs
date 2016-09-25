@@ -22,6 +22,7 @@ namespace straat.Control
 		D,
 		E,
 		F,
+		G,
 		// ...
 		S,
 		// ...
@@ -152,6 +153,7 @@ namespace straat.Control
 			keyBindings.Add( Keys.D, InputCommand.D );
 			keyBindings.Add( Keys.E, InputCommand.E );
 			keyBindings.Add( Keys.F, InputCommand.F );
+			keyBindings.Add( Keys.G, InputCommand.G );
 
 
 

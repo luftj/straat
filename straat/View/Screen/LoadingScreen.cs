@@ -19,6 +19,7 @@ namespace straat.View.Screen
 		SpriteFont font;
 		#endregion
 
+		MapBuilder mapBuilder;
 		Thread mapBuildingThread;
 		bool done = false;
 
@@ -38,7 +39,7 @@ namespace straat.View.Screen
 
 		public void Initialize()
 		{
-			mapBuildingThread = new Thread( new ThreadStart(doThings) );
+			mapBuildingThread = new Thread( new ThreadStart(generateMap) );
 			mapBuildingThread.IsBackground = true;
 			mapBuildingThread.Start();
 		}
@@ -53,11 +54,13 @@ namespace straat.View.Screen
 			
 		}
 
-		private void doThings()
+		private void generateMap()
 		{
-			float statusstep = 1.0f/10.0f;
+			float statusstep = 1.0f/11.0f;
 
+			int seed = 4231337;
 			world = new World();
+			world.seed = seed;
 			statusmsg+="initialising mapbuilder...\n";
 
 			float dimension = 2048.0f;
@@ -65,54 +68,54 @@ namespace straat.View.Screen
 			cam.position -= new Vector2( dimension / 2.0f );
 			cam.position.X -= viewport.Width / 2.0f;
 
-			world.mapBuilder = new MapBuilder( dimension, 4096, 256.0f, 4231337 );
-			status = statusstep;
+			mapBuilder = new MapBuilder( dimension, 8194, 256.0f, seed );
+			status += statusstep;
 
 			statusmsg+="generating Voronoi graph...\n";
-			BenTools.Mathematics.VoronoiGraph voronoiGraph = world.mapBuilder.createVoronoiGraph();
-			status = statusstep;
+			BenTools.Mathematics.VoronoiGraph voronoiGraph = mapBuilder.createVoronoiGraph();
+			status += statusstep;
 			
 			statusmsg+="converting Voronoi graph...\n";
-			world.map = world.mapBuilder.buildMapFromGraph( voronoiGraph );
+			world.map = mapBuilder.buildMapFromGraph( voronoiGraph );
 			mapDrawer = new MapDrawer( screenManager.game, world.map );
-			status = statusstep;
+			status += statusstep;
 			statusmsg += "fixing Holes...\n";
-			world.mapBuilder.fixHoles();
-			status = statusstep;
+			mapBuilder.fixHoles();
+			status += statusstep;
 
 			statusmsg+="applying Elevation..\n";
-			world.mapBuilder.applyElevation();
-			//			world.mapBuilder.applyCone(1.0f);
-			status = statusstep;
+			mapBuilder.applyElevation();
+			//world.mapBuilder.applyCone(1.0f);
+			status += statusstep;
 
 			statusmsg+="normalising Elevation...\n";
-			world.mapBuilder.normaliseElevation();
-			status = statusstep;
-
-
-
-			//mapBuilder.raiseElevation( -0.2f );
-			//mapBuilder.normaliseElevation();
+			mapBuilder.normaliseElevation();
+			status += statusstep;
 
 			statusmsg+="filling local minima...\n";
-			world.mapBuilder.fillMinima();
-			status = statusstep;
+			mapBuilder.fillMinima();
+			status += statusstep;
 
 			Thread.Sleep(2000);
 			statusmsg+="smoothening elevation...\n";
-			world.mapBuilder.smoothen();
-			world.mapBuilder.smoothen();
-			status = statusstep;
+			mapBuilder.smoothen();
+			mapBuilder.smoothen();
+			status += statusstep;
 			Thread.Sleep(2000);
 
 
 			statusmsg+="filling local minima...\n";
-			world.mapBuilder.fillMinima();
-			status = statusstep;
+			mapBuilder.fillMinima();
+			status += statusstep;
+
+			statusmsg += "raising sea level...\n";
+			mapBuilder.raiseElevation( -0.3f );
+			//mapBuilder.normaliseElevation();
+			status+=statusstep;
 
 			statusmsg+="normalising Elevation...\n";
-			world.mapBuilder.normaliseElevation();
-			status = statusstep;
+			mapBuilder.normaliseElevation();
+			status += statusstep;
 
 			//mapBuilder.smoothenMinima( 0.5f, 1.0f );
 			//mapBuilder.smoothenMinima( 0.4f, 0.6f );
@@ -120,7 +123,7 @@ namespace straat.View.Screen
 
 			mapDrawer.drawRivers = false;
 			statusmsg+="drawing rivers\n";
-			world.mapBuilder.applyRivers();
+			mapBuilder.applyRivers();
 			mapDrawer.drawRivers = true;
 
 			status = 1.0f;
