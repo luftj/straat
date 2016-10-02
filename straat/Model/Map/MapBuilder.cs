@@ -466,13 +466,57 @@ namespace straat
 			map.rivers.Add( river );
 		}
 	
-		private void calculateSettlementInterestFxn()
+		/// <summary>
+		/// Calculates the settlement interest function as a sum of all interest criteria.
+		/// </summary>
+		/// <returns>The settlement interest function at c in [-1,1] </returns>
+		/// <param name="c">Region to consider</param>
+		private double calculateSettlementInterestFxn(Center c)
 		{
-			Dictionary<string,float> interestFxn = new Dictionary<string, float>();
+			double interest = 0.0f;
 
-			foreach(KeyValuePair<string,Center> item in map.centers)
+			// criterion: slope
+
+
+			// criterion: distance to water
+			// rivers
+			Center closest;
+			map.findClosestRiver( c, out closest );
+			double dist = Math.Abs( (c.position - closest.position).Length() );
+			// ocean
+
+
+
+			// criterion: distance to roads
+			map.findClosestRoad( c, out closest );
+			dist = Math.Abs( (c.position - closest.position).Length() );
+
+
+
+			// return -1 if any one criterium is -1
+
+			// else return sum over all interest criteria
+
+			return 0.0f;
+		}
+
+		private Settlement sampleSettlementSeed()
+		{
+			while(true)
 			{
-				
+				// find a new spot
+				Center c = map.centers.Values.ElementAt(rng.Next(map.centers.Count));
+
+				// calculate interest fxn at this spot
+				double I = calculateSettlementInterestFxn(c);
+
+				// sample
+				double X = rng.NextDouble();
+				if( X > I )
+					continue;	// don't use this spot
+
+				// use this spot -> create seed
+				return new Settlement(c);
 			}
 		}
 	}

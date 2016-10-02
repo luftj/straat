@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
+using straat.Control;
 
 
 namespace straat.View.Drawing
@@ -172,6 +173,15 @@ namespace straat.View.Drawing
 				}
 		}
 
+		public void Update(Input input)
+		{
+			if(input.pop(InputCommand.C)) drawVoronoiCenters = !drawVoronoiCenters;
+			if(input.pop(InputCommand.D)) drawDelaunayEdges = !drawDelaunayEdges;
+			if(input.pop(InputCommand.E)) drawVoronoiEdges = !drawVoronoiEdges;
+			if(input.pop(InputCommand.F)) drawVoronoiVertices = !drawVoronoiVertices;
+			if( input.pop( InputCommand.G ) ) cycleShading();
+		}
+
 		public Color elevationColourMap(float elevation)
 		{
 			// ocean
@@ -200,11 +210,12 @@ namespace straat.View.Drawing
 		{
 			float azimuth = (float)Math.PI * 3.0f / 4.0f;	// light comes from north-west
 
-			float theta = aspect - azimuth;
+			float theta = azimuth - aspect;
 
-			float value = (float)Math.Abs(Math.Cos(( theta )));
+			float value = (float)(Math.Cos(( theta )));
 
-//			value += (float)Math.PI;
+			value += 1;
+			value /= 2.0f;
 //			value /= (float)(Math.PI * 2.0 + 12.0);
 
 			//value = (float)(( (double)value + Math.PI ) / ( Math.PI * 2.0 ));
@@ -227,13 +238,13 @@ namespace straat.View.Drawing
 
 		public Color hillShading(Corner roi)
 		{
-			float S = roi.angle;
+			float S = (float)Math.Abs(roi.angle);
 			float A = roi.aspect;
 
 			float I = (float)Math.PI * 3.0f / 4.0f;
 			float D = (float)Math.PI / 4.0f;
 
-			float BV = (float)(Math.Cos( I ) * Math.Sin( S ) * Math.Cos(Math.Abs(A - D )) + Math.Sin( I ) * Math.Cos( S ));
+			float BV = (float)(Math.Cos( I ) * Math.Sin( S ) * Math.Cos((A - D )) + Math.Sin( I ) * Math.Cos( S ));
 
 			return Color.Lerp( Color.White, Color.Black, BV );
 		}

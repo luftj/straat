@@ -131,7 +131,7 @@ namespace straat
 		/// </summary>
 		public override int GetHashCode()
 		{
-			//return 0;
+//			throw new NotSupportedException( "Don't use integer hashing, since it wont guarantee unique hashes for different positions!" );
 			return position.GetHashCode();
 		}
 
@@ -146,6 +146,11 @@ namespace straat
 			return o?.position.X == position.X && o?.position.Y == position.Y;
 		}
 			
+		/// <summary>
+		/// Used for determining clockwise orientation between two points in relation to a "center" point.
+		/// </summary>
+		/// <returns><c>true</c>, if a is "more clockwise" than b <c>false</c> otherwise.</returns>
+		/// <param name="reference">Reference or center point.</param>
 		static bool isLessThan(Vector2 a, Vector2 b, Vector2 reference) 
 		{
 			if (Vector2.Equals(a,b))
@@ -180,7 +185,6 @@ namespace straat
 	{
 		private static int idC = 0;
 		public int id { get;}
-//		public Vector2 position;
 
 		#region graph
 		public List<Center> touches;// { get;}
@@ -189,7 +193,7 @@ namespace straat
 		#endregion
 
 
-		public float elevation //= 10.0f;
+		public float elevation
 		{get{
 				float ret = 0.0f;
 				foreach(Center c in touches)
@@ -243,12 +247,11 @@ namespace straat
 				return N;
 			}}
 
-		public float angle {get{ return (float)Math.Acos( Vector3.Dot( surfaceNormal, Vector3.UnitZ ) );}}
+		public float angle {get{ return (float)Math.Acos( Vector3.Dot( surfaceNormal, Vector3.UnitZ ) );}}	// UnitZ correct?
 
 		public float slope {get{return (float)Math.Tan(angle);}}
 
-		public float aspect{get{ return (float)Math.Abs( Math.Atan2( surfaceNormal.X, surfaceNormal.Y ) );
-			}}
+		public float aspect{get{ return (float)( Math.Atan2( surfaceNormal.X, surfaceNormal.Y ) ); }}
 
 		public Corner()
 		{
@@ -285,7 +288,7 @@ namespace straat
 		/// </summary>
 		public override int GetHashCode()
 		{
-			//return 0;
+//			throw new NotSupportedException( "Don't use integer hashing, since it wont guarantee unique hashes for different positions!" );
 			return position.GetHashCode();
 		}
 			
@@ -356,6 +359,8 @@ namespace straat
 		public Dictionary<string,Corner> corners;	// dto
 
 		public List<River> rivers;
+		public List<Settlement> settlements;
+		public List<Road> roads;
 
 		public Map()
 		{
@@ -363,6 +368,8 @@ namespace straat
 			corners = new Dictionary<string, Corner>();
 
 			rivers = new List<River>();
+			settlements = new List<Settlement>();
+			roads = new List<Road>();
 		}
 
 		public Center getRegionAt(float x, float y)
@@ -409,6 +416,54 @@ namespace straat
 				}
 			}
 			return ret;
+		}
+
+		public Road findClosestRoad(Center c, out Center closest)
+		{
+			float minDist = float.PositiveInfinity;
+			closest = null;
+			Road closestRoad = null;
+
+			foreach(Road r in roads)
+			{
+				foreach(Center p in r.path)
+				{
+					if( c.hashString() == p.hashString() )
+						return r;
+					float curDist = (float)Math.Abs((c.position - p.position).Length());
+					if(curDist< minDist)
+					{
+						minDist = curDist;
+						closest = p;
+						closestRoad = r;
+					}
+				}
+			}
+			return closestRoad;
+		}
+
+		public River findClosestRiver(Center c, out Center closest)
+		{
+			float minDist = float.PositiveInfinity;
+			closest = null;
+			River closestRiver = null;
+
+			foreach(River r in rivers)
+			{
+				foreach(Center p in r.path)
+				{
+					if( c.hashString() == p.hashString() )
+						return r;
+					float curDist = (float)Math.Abs((c.position - p.position).Length());
+					if(curDist< minDist)
+					{
+						minDist = curDist;
+						closest = p;
+						closestRiver = r;
+					}
+				}
+			}
+			return closestRiver;
 		}
 	}
 }

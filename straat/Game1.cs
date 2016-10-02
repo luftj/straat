@@ -24,6 +24,9 @@ namespace straat
 
         SpriteFont font;
 
+		double simulationTime = 0.0;
+		double simulationSpeed = 1.0;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -90,7 +93,14 @@ namespace straat
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+			// step forward in simulation
+			simulationTime += gameTime.ElapsedGameTime.TotalMilliseconds * simulationTime;
+
             InputHandler.Update();
+
+			// play/pause
+			if(InputHandler.pop(InputCommand.SPACE))
+				simulationSpeed = simulationSpeed == 0.0 ? 1.0 : 0.0;
 
             screenManager.Update(gameTime.ElapsedGameTime.TotalMilliseconds, InputHandler);
 

@@ -17,6 +17,7 @@ namespace straat.Control
 		LEFT_CONT,	// continuous keypress
 		RIGHT_CONT,	// continuous keypress
         SELECT,
+		SPACE,
 		A,
 		C,
 		D,
@@ -148,6 +149,8 @@ namespace straat.Control
 			keyBindings.Add( Keys.PageUp, InputCommand.SCROLL_UP );
 
 			keyBindings.Add( Keys.PageDown, InputCommand.SCROLL_DOWN );
+
+			keyBindings.Add( Keys.Space, InputCommand.SPACE );
 
 			keyBindings.Add( Keys.C, InputCommand.C );
 			keyBindings.Add( Keys.D, InputCommand.D );

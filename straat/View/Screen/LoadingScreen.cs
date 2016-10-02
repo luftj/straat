@@ -64,7 +64,7 @@ namespace straat.View.Screen
 			statusmsg+="initialising mapbuilder...\n";
 
 			float dimension = 2048.0f;
-			cam.zoomFactor /= 2.0f;
+			cam.zoom /= 2.0f;
 			cam.position -= new Vector2( dimension / 2.0f );
 			cam.position.X -= viewport.Width / 2.0f;
 
@@ -85,7 +85,7 @@ namespace straat.View.Screen
 
 			statusmsg+="applying Elevation..\n";
 			mapBuilder.applyElevation();
-			//world.mapBuilder.applyCone(1.0f);
+			//mapBuilder.applyCone(1.0f);
 			status += statusstep;
 
 			statusmsg+="normalising Elevation...\n";
@@ -133,7 +133,6 @@ namespace straat.View.Screen
 
 		public void Update(double deltaT, straat.Control.Input input)
 		{
-			
 			if(done)
 			{
 				// split screen vertically in two halves

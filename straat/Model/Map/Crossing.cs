@@ -7,11 +7,11 @@ namespace straat
 	public class Crossing : MapNode
 	{
 
-		public List<Street> roads;
+		public List<Road> roads;
 
-		public Crossing(Vector2 pos) : base(pos)
+		public Crossing(Center pos) : base(pos)
 		{
-			roads = new List<Street>();
+			roads = new List<Road>();
 		}
 	}
 }

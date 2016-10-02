@@ -21,6 +21,7 @@ namespace straat.View.Screen
 		Camera camera;
 		public World world;
 		Entity selection;
+		Center curRegion;
 
 		MapDrawer mapDrawer;
 
@@ -29,7 +30,7 @@ namespace straat.View.Screen
 		string debugtext;
 		#endregion
 
-		Center curRegion;
+
 		public GameScreen( ScreenManager screenManager, Rectangle bounds )
 		{
 			this.screenManager = screenManager;
@@ -105,11 +106,13 @@ namespace straat.View.Screen
 
 				// is in view: draw world object
 				Color curCol = entity.getAllegiance() == Allegiance.PLAYER ? Color.Blue : Color.Red;
-				screenManager.game.spriteBatch.Draw(entity.gc.texture,drawingPos,scale:new Vector2(camera.zoomFactor),color:curCol);
+				screenManager.game.spriteBatch.Draw(entity.gc.texture,drawingPos,scale:new Vector2(camera.zoom),color:curCol);
 			}
 			#endregion
 
+			#region debug_output
 			screenManager.game.spriteBatch.DrawString( font, debugtext, new Vector2( 10, 10 ), Color.White );
+			#endregion
 
 			#region end_draw
 			screenManager.game.spriteBatch.End();
@@ -121,27 +124,16 @@ namespace straat.View.Screen
 
 		public void Update( double deltaT, Input input )
 		{
-			// move camera according to input
-			int speed = 1;
-			if( input.peek( InputCommand.SHIFT_CONT ) ) speed = 10;
-			if( input.peek( InputCommand.LEFT_CONT ) ) 	camera.position.X-=speed; 
-			if( input.peek( InputCommand.RIGHT_CONT ) ) camera.position.X+=speed;
-			if( input.peek( InputCommand.UP_CONT ) ) 	camera.position.Y-=speed;
-			if( input.peek( InputCommand.DOWN_CONT ) ) 	camera.position.Y+=speed;
-			if( input.pop( InputCommand.SCROLL_UP ) ) 	camera.ZoomIn();
-			if( input.pop( InputCommand.SCROLL_DOWN ) ) camera.ZoomOut();
-		
+			camera.Update( input );		
 
 			// debug
-			if(input.pop(InputCommand.C)) mapDrawer.drawVoronoiCenters = !mapDrawer.drawVoronoiCenters;
-			if(input.pop(InputCommand.D)) mapDrawer.drawDelaunayEdges = !mapDrawer.drawDelaunayEdges;
-			if(input.pop(InputCommand.E)) mapDrawer.drawVoronoiEdges = !mapDrawer.drawVoronoiEdges;
-			if(input.pop(InputCommand.F)) mapDrawer.drawVoronoiVertices = !mapDrawer.drawVoronoiVertices;
-			if( input.pop( InputCommand.G ) ) mapDrawer.cycleShading();
+			mapDrawer.Update( input );
 		
 			// get mouse position
 			int x = input.pointerEvent.X;
 			int y = input.pointerEvent.Y;
+
+			#region debug_output
 			Vector2 worldPos = camera.getWorldPos( new Vector2( x, y ) );
 			debugtext = "screen: " + x + ", " + y + "\n";
 			debugtext += "world: " + worldPos.X + ", " + worldPos.Y;
@@ -149,16 +141,19 @@ namespace straat.View.Screen
 			debugtext += ", elevation: " + curRegion.elevation + ", id: "+ curRegion.id + "\n";
 			debugtext += "seed: " + world.seed + "\n";
 			debugtext += mapDrawer.shadingStyle.ToString();
+			#endregion
 
 			// handle clicks
 			if( viewport.Bounds.Contains( x, y ) )
 			{
 				if( input.pointerEvent.Command == PointerCommand.PRIMARY || input.pointerEvent.Command == PointerCommand.SECONDARY )
 				{
-					selection = picker.getSelection( x - viewport.Bounds.Left, y - viewport.Bounds.Top );
-
 					// pass the new selection to all interested screens
-					screenManager.addMessage( new ScreenMessage( typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, selection ) );
+					selection = picker.getSelection( x - viewport.Bounds.Left, y - viewport.Bounds.Top );
+					if(selection != null)
+						screenManager.addMessage( new ScreenMessage( typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, selection ) );
+					else
+						screenManager.addMessage( new ScreenMessage( typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, curRegion ) );
 				}
 			}
 		}
@@ -170,7 +165,7 @@ namespace straat.View.Screen
 			viewport.Width = (int)( viewport.Width * widthScale );
 			viewport.Height = (int)( viewport.Height * heightScale );
 
-			camera.changeViewport(widthScale,heightScale);
+			camera.changeViewport( widthScale, heightScale );
 			picker = new Picker( screenManager.game, viewport.Bounds.Width, viewport.Bounds.Height );
 		}
         

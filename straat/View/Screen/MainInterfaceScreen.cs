@@ -11,6 +11,7 @@ namespace straat
 	public class MainInterfaceScreen : InterfaceScreen
 	{
 		Entity selection;
+		Center regionSelected;
 
 		public MainInterfaceScreen(ScreenManager sm, Rectangle b ) : base(sm,b)
 		{
@@ -32,7 +33,9 @@ namespace straat
 				switch(msg.messageType)
 				{
 				case ScreenMessageType.SELECTION_CHANGE:
-					selection = (Entity)msg.message[0];
+					selection = msg.message[0] as Entity;
+					if( selection == null )
+						regionSelected = msg.message[0] as Center;
 					break;
 				default:
 					break;
@@ -55,11 +58,22 @@ namespace straat
 			Vector2 drawPos = new Vector2(10,10);
 
 			// todo: draw content
-			screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id, drawPos, Color.White );
-			drawPos.Y += 20;
+			if( selection != null )
+			{
+				screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id + regionSelected?.hashString(), drawPos, Color.White );
+				drawPos.Y += 20;
+			}
+			if(regionSelected != null)
+			{
+				string output = "Region details: " + regionSelected.position.ToString() + "\nElevation: " + regionSelected.elevation;
+				screenManager.game.spriteBatch.DrawString( font, output, drawPos, Color.White );
+				drawPos.Y += 40;
+			}
+
+
 			screenManager.game.spriteBatch.DrawString(font,"S: List squads",drawPos,Color.White);
 
-
+			#region debug_output
 			// debug
 			drawPos.Y += 20;
 			drawPos.Y += 20;
@@ -72,7 +86,7 @@ namespace straat
 			screenManager.game.spriteBatch.DrawString(font,"F: draw region vertices",drawPos,Color.White);
 			drawPos.Y += 20;
 			screenManager.game.spriteBatch.DrawString(font,"G: change shading style",drawPos,Color.White);
-
+			#endregion
 
 			screenManager.game.spriteBatch.End();
 			// switch back to standard viewport

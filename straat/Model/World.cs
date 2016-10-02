@@ -11,8 +11,6 @@ namespace straat.Model
 	{
 		public List<Entity> entities;
 
-		public List<Crossing> roadNetwork;
-
 		public Map map;
 
 		public int seed;

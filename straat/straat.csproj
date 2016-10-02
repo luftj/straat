@@ -56,9 +56,7 @@
     <Compile Include="Geometry\Point.cs" />
     <Compile Include="Geometry\Polygon.cs" />
     <Compile Include="Geometry\Rectangle.cs" />
-    <Compile Include="Control\WorldObject.cs" />
     <Compile Include="Control\Picker.cs" />
-    <Compile Include="Model\Map\Street.cs" />
     <Compile Include="Model\Map\Settlement.cs" />
     <Compile Include="Model\Map\MapNode.cs" />
     <Compile Include="Model\Map\Crossing.cs" />
@@ -71,6 +69,7 @@
     <Compile Include="Model\Map\Map.cs" />
     <Compile Include="View\Drawing\MapDrawer.cs" />
     <Compile Include="View\Screen\LoadingScreen.cs" />
+    <Compile Include="Model\Map\Road.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">

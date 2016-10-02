@@ -7,7 +7,7 @@ namespace straat
 	public class Settlement : MapNode
 	{
 
-		public Settlement(Vector2 pos) : base(pos)
+		public Settlement(Center pos) : base(pos)
 		{
 		}
 	}

@@ -6,13 +6,15 @@ namespace straat
 {
 	public class MapNode
 	{
-		public Vector2 position{ get; protected set;}
+//		public Vector2 position{ get; protected set;}
+
+		public Center region;
 
 		//public List<Region> touchingRegions;
 
-		public MapNode(Vector2 pos)
+		public MapNode(Center pos)
 		{
-			position = pos;
+			region = pos;
 		}
 	}
 }

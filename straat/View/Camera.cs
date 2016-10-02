@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using straat.Control;
 
 namespace straat.View
 {
@@ -11,35 +12,35 @@ namespace straat.View
     {
         public Vector2 position;
 		// todo: set origin to viewport center (so zooming happens concentrically)
-        public float zoomFactor;
-		private float zoomStep = 2.0f;
+        public float zoom;
+		private float zoomFactor = 2.0f;
 		Rectangle viewport;
 
 		public Camera(Rectangle viewport)
         {
             position = Vector2.Zero;
-            zoomFactor = 1.0f;
+            zoom = 1.0f;
 			this.viewport = viewport;
         }
 
 		public void ZoomIn()
 		{
-			zoomFactor *= zoomStep;
+			zoom *= zoomFactor;
 		}
 
 		public void ZoomOut()
 		{
-			zoomFactor /= zoomStep;
+			zoom /= zoomFactor;
 		}
 
 		public Vector2 getDrawPos(Vector2 worldPos)
 		{
-			return (worldPos - position)*zoomFactor;
+			return (worldPos - position)*zoom;
 		}
 
 		public Vector2 getWorldPos(Vector2 drawPos)
 		{
-			return drawPos/zoomFactor + position;
+			return drawPos / zoom + position;
 		}
 
 		public bool isInBounds(Vector2 p)
@@ -80,6 +81,19 @@ namespace straat.View
 			viewport.Y = (int)( viewport.Y * heightScale );
 			viewport.Width = (int)( viewport.Width * widthScale );
 			viewport.Height = (int)( viewport.Height * heightScale );
+		}
+
+		public void Update( Input input )
+		{
+			// move camera according to input
+			int speed = 1;
+			if( input.peek( InputCommand.SHIFT_CONT ) ) speed = 10;
+			if( input.peek( InputCommand.LEFT_CONT ) ) 	position.X -= speed; 
+			if( input.peek( InputCommand.RIGHT_CONT ) ) position.X += speed;
+			if( input.peek( InputCommand.UP_CONT ) ) 	position.Y -= speed;
+			if( input.peek( InputCommand.DOWN_CONT ) ) 	position.Y += speed;
+			if( input.pop( InputCommand.SCROLL_UP ) ) 	ZoomIn();
+			if( input.pop( InputCommand.SCROLL_DOWN ) ) ZoomOut();
 		}
     }
 }
