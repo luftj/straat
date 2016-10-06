@@ -60,7 +60,7 @@ namespace straat
 			// todo: draw content
 			if( selection != null )
 			{
-				screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id + regionSelected?.hashString(), drawPos, Color.White );
+				screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id, drawPos, Color.White );
 				drawPos.Y += 20;
 			}
 			if(regionSelected != null)

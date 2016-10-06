@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "straat", "straat\straat.csproj", "{C1434ECD-E846-42D5-A59B-DECA0A8CA828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FortuneVoronoi", "..\fortune-voronoi\fortune-voronoi\FortuneVoronoi\FortuneVoronoi.csproj", "{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FortuneVoronoi", "FortuneVoronoi\FortuneVoronoi.csproj", "{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

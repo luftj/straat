@@ -108,7 +108,7 @@
     <Folder Include="Model\AI\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\fortune-voronoi\fortune-voronoi\FortuneVoronoi\FortuneVoronoi.csproj">
+    <ProjectReference Include="..\FortuneVoronoi\FortuneVoronoi.csproj">
       <Project>{DDF5D740-6EE1-44BA-9DB9-782BF23E28D6}</Project>
       <Name>FortuneVoronoi</Name>
     </ProjectReference>
