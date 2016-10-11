@@ -466,6 +466,28 @@ namespace straat
 			map.rivers.Add( river );
 		}
 	
+		private void generateCities()
+		{
+			int numberOfCities = 10;
+
+			while(numberOfCities > 0)
+			{
+				float x = rng.Next( -dimensions / 2, dimensions / 2 );
+				float y = rng.Next( -dimensions / 2, dimensions / 2 );
+
+				Center pos = map.getRegionAt( x, y );
+
+				Settlement newSettlement = new Settlement( pos );
+
+
+				// connect to road network
+				connectToRoadNetwork(newSettlement);
+
+
+				map.settlements.Add(newSettlement);
+			}
+		}
+
 		/// <summary>
 		/// Calculates the settlement interest function as a sum of all interest criteria.
 		/// </summary>
@@ -498,6 +520,14 @@ namespace straat
 			// else return sum over all interest criteria
 
 			return 0.0f;
+		}
+
+		private void connectToRoadNetwork(Settlement curSett)
+		{
+			if( map.settlements.Count == 0 )
+				return;
+
+			// todo
 		}
 
 		private Settlement sampleSettlementSeed()
