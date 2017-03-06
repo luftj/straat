@@ -19,7 +19,7 @@ namespace straat.View.Screen
 		Picker picker;
 
 		Camera camera;
-		public World world;
+		public GameManager world;
 		Entity selection;
 		Center curRegion;
 

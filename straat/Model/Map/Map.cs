@@ -8,6 +8,7 @@ namespace straat
 	public class Site
 	{
 		public Vector2 position;
+
 	}
 
 	public class Center : Site
@@ -204,7 +205,7 @@ namespace straat
 				return ret;
 			}}
 
-		public bool isOcean{get{
+		public bool isOcean{ get{
 				bool ret = isEndOfTheWorld;
 				if( ret )
 					return true;
@@ -213,9 +214,7 @@ namespace straat
 				return ret;
 			}}
 
-		public bool isEndOfTheWorld
-		{
-			get {
+		public bool isEndOfTheWorld { get {
 				bool ret = float.IsInfinity( position.Length() );
 				if( !ret )
 					foreach( Center c in touches )

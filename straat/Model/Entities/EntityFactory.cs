@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using straat.View.Drawing;
 using Microsoft.Xna.Framework.Content;
 
-namespace straat
+namespace straat.Model.Entities
 {
 	public class EntityFactory
 	{

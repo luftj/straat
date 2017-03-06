@@ -472,8 +472,8 @@ namespace straat
 
 			while(numberOfCities > 0)
 			{
-				float x = rng.Next( -dimensions / 2, dimensions / 2 );
-				float y = rng.Next( -dimensions / 2, dimensions / 2 );
+				float x = rng.Next( -(int)dimensions / 2, (int)dimensions / 2 );
+				float y = rng.Next( -(int)dimensions / 2, (int)dimensions / 2 );
 
 				Center pos = map.getRegionAt( x, y );
 

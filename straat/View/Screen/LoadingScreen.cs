@@ -13,7 +13,7 @@ namespace straat.View.Screen
 		ScreenManager screenManager;
 		Viewport viewport;
 
-		World world;
+		GameManager world;
 
 		#region content
 		SpriteFont font;
@@ -59,7 +59,7 @@ namespace straat.View.Screen
 			float statusstep = 1.0f/11.0f;
 
 			int seed = 4231337;
-			world = new World();
+			world = new GameManager();
 			world.seed = seed;
 			statusmsg+="initialising mapbuilder...\n";
 

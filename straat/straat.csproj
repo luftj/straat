@@ -37,8 +37,7 @@
   <ItemGroup>
     <Compile Include="Control\Input.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Model\Entity.cs" />
-    <Compile Include="Model\World.cs" />
+    <Compile Include="Model\GameManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\Camera.cs" />
@@ -62,7 +61,6 @@
     <Compile Include="Model\Map\Crossing.cs" />
     <Compile Include="Model\Map\Region.cs" />
     <Compile Include="Control\SelectableComponent.cs" />
-    <Compile Include="Model\EntityFactory.cs" />
     <Compile Include="View\Screen\ScreenMessage.cs" />
     <Compile Include="Model\AI\MovementComponent.cs" />
     <Compile Include="Model\Map\MapBuilder.cs" />
@@ -70,6 +68,10 @@
     <Compile Include="View\Drawing\MapDrawer.cs" />
     <Compile Include="View\Screen\LoadingScreen.cs" />
     <Compile Include="Model\Map\Road.cs" />
+    <Compile Include="Model\Entities\Entity.cs" />
+    <Compile Include="Model\Entities\EntityFactory.cs" />
+    <Compile Include="Model\Entities\Order.cs" />
+    <Compile Include="Model\Map\Pathfinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
@@ -106,6 +108,7 @@
   <ItemGroup>
     <Folder Include="Model\Map\" />
     <Folder Include="Model\AI\" />
+    <Folder Include="Model\Entities\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FortuneVoronoi\FortuneVoronoi.csproj">

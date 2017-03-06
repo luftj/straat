@@ -7,7 +7,7 @@ using straat.View.Drawing;
 
 namespace straat.Model
 {
-	class World
+	class GameManager
 	{
 		public List<Entity> entities;
 
@@ -16,7 +16,7 @@ namespace straat.Model
 		public int seed;
 
 
-		public World()
+		public GameManager()
 		{
 			entities = new List<Entity>();
 		}
@@ -27,7 +27,14 @@ namespace straat.Model
 		/// <param name="deltaT">time elapsed since last tick.</param>
 		public void Update(double deltaT)
 		{
-			//
+			// update world (towns, ...)
+
+			// move entities
+
+			// handle world events
+
+			// update ai
+
 		}
 
 		/// <summary>

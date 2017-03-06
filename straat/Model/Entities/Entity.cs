@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace straat.Model
+namespace straat.Model.Entities
 {
 	public enum Allegiance
 	{
@@ -21,14 +21,17 @@ namespace straat.Model
         public GraphicsComponent gc { get; private set; }
 		public SelectableComponent sc { get; }
 
-		public Vector2 worldPos {get;}
+		public Vector2 worldPos { get; private set;}
 
 		public int id { get; private set;}
 		private static int idCounter = 1234;
 
+		float speed;
 
 		string faction;
-        
+
+		Order standingOrder;
+
 
         public Entity()
         {
@@ -50,6 +53,28 @@ namespace straat.Model
 				return Allegiance.PLAYER;
 			else
 				return Allegiance.ENEMY;
+		}
+
+		public void update(double deltaT)
+		{
+			// handle state
+
+			// handle orders
+			switch (standingOrder.type) 
+			{
+			case OrderType.MOVE:
+				//do something
+				Vector2 goal = (Vector2)standingOrder.data [0];
+				Vector2 direction = goal - worldPos;
+				direction.Normalize();
+				worldPos += direction * speed;
+				// TODO: pathfinding
+				break;
+
+			case OrderType.NONE:
+			default:
+				break;
+			}
 		}
     }
 }
