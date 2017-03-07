@@ -5,6 +5,7 @@ using straat.Model;
 using Microsoft.Xna.Framework;
 using System.Threading;
 using straat.View.Drawing;
+using straat.Model.Map;
 
 namespace straat.View.Screen
 {
@@ -56,19 +57,19 @@ namespace straat.View.Screen
 
 		private void generateMap()
 		{
-			float statusstep = 1.0f/11.0f;
+			float statusstep = 1.0f/14.0f;
 
 			int seed = 4231337;
 			world = new GameManager();
 			world.seed = seed;
 			statusmsg+="initialising mapbuilder...\n";
 
-			float dimension = 2048.0f;
+			float dimension = 20480.0f; // 1.0f == 1m
 			cam.zoom /= 2.0f;
 			cam.position -= new Vector2( dimension / 2.0f );
 			cam.position.X -= viewport.Width / 2.0f;
 
-			mapBuilder = new MapBuilder( dimension, 8194, 256.0f, seed );
+			mapBuilder = new MapBuilder( dimension, 8194, 2560.0f, seed );
 			status += statusstep;
 
 			statusmsg+="generating Voronoi graph...\n";
@@ -81,15 +82,18 @@ namespace straat.View.Screen
 			status += statusstep;
 			statusmsg += "fixing Holes...\n";
 			mapBuilder.fixHoles();
+			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
 			statusmsg+="applying Elevation..\n";
 			mapBuilder.applyElevation();
+			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			//mapBuilder.applyCone(1.0f);
 			status += statusstep;
 
 			statusmsg+="normalising Elevation...\n";
 			mapBuilder.normaliseElevation();
+			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
 			statusmsg+="filling local minima...\n";
@@ -110,21 +114,39 @@ namespace straat.View.Screen
 
 			statusmsg += "raising sea level...\n";
 			mapBuilder.raiseElevation( -0.3f );
+			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			//mapBuilder.normaliseElevation();
 			status+=statusstep;
 
 			statusmsg+="normalising Elevation...\n";
 			mapBuilder.normaliseElevation();
+			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
 			//mapBuilder.smoothenMinima( 0.5f, 1.0f );
 			//mapBuilder.smoothenMinima( 0.4f, 0.6f );
 			//mapBuilder.smoothenMinima( 0.1f, 0.3f );
 
+
+			// todo: noch höher?
+			statusmsg += "adjusting scale...\n";
+			mapBuilder.scaleElevation();
+			MapDrawer.scaleElevation(mapBuilder.maxElevation);
+			status += statusstep;
+
 			mapDrawer.drawRivers = false;
-			statusmsg+="drawing rivers\n";
+			statusmsg+="drawing rivers...\n";
 			mapBuilder.applyRivers();
 			mapDrawer.drawRivers = true;
+			status += statusstep;
+
+
+			mapDrawer.drawCities = false;
+			statusmsg+="populating cities...\n";
+			mapBuilder.generateCities();
+			mapDrawer.drawCities = true;
+			status += statusstep;
+
 
 			status = 1.0f;
 			Thread.Sleep(2000);
@@ -145,7 +167,7 @@ namespace straat.View.Screen
 				// goto main game setup
 				GameScreen gs = new GameScreen( screenManager, a );
 				gs.world = world;
-				screenManager.activateScreen(gs );
+				screenManager.activateScreen( gs );
 				screenManager.activateScreen( new MainInterfaceScreen( screenManager, b ) );
 				screenManager.deactivateScreen( this );
 			}

@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
-namespace straat
+namespace straat.Model.Map
 {
-	public class Settlement : MapNode
+	public class Settlement
 	{
+		public Center region;
 
-		public Settlement(Center pos) : base(pos)
+		public List<Road> roads;	// todo: move to center?
+
+		public Settlement(Center pos)
 		{
+			region = pos;
+
+			roads = new List<Road>();
 		}
 	}
 }

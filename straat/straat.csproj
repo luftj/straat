@@ -57,7 +57,6 @@
     <Compile Include="Geometry\Rectangle.cs" />
     <Compile Include="Control\Picker.cs" />
     <Compile Include="Model\Map\Settlement.cs" />
-    <Compile Include="Model\Map\MapNode.cs" />
     <Compile Include="Model\Map\Crossing.cs" />
     <Compile Include="Model\Map\Region.cs" />
     <Compile Include="Control\SelectableComponent.cs" />

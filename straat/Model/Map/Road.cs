@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace straat
+namespace straat.Model.Map
 {
 	public class Road
 	{

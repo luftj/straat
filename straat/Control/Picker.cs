@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using straat.Model;
+using straat.Model.Entities;
 
 namespace straat.Control
 {

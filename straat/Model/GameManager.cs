@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using straat.Model.Entities;
 using straat.View.Drawing;
+using straat.Model.Map;
 
 namespace straat.Model
 {
@@ -11,7 +13,7 @@ namespace straat.Model
 	{
 		public List<Entity> entities;
 
-		public Map map;
+		public Map.Map map;
 
 		public int seed;
 

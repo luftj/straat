@@ -8,6 +8,9 @@ namespace straat.Model.Entities
 		MOVE,
 		ATTACK,
 		HOLD,
+		HIDE,
+		AMBUSH,
+		ESCORT,
 
 		NONE,
 

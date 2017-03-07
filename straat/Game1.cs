@@ -7,6 +7,7 @@ using straat.Control;
 using straat.View.Screen;
 using System.Collections.Generic;
 using straat.View.Drawing;
+using straat.Model.Entities;
 
 namespace straat
 {

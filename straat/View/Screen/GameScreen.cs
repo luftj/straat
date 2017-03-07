@@ -8,6 +8,8 @@ using straat.Model;
 using straat.View.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using straat.Model.Entities;
+using straat.Model.Map;
 
 namespace straat.View.Screen
 {

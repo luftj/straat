@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
-namespace straat
+namespace straat.Model.Map
 {
 	public class Site
 	{
 		public Vector2 position;
-
 	}
 
 	public class Center : Site
@@ -75,6 +74,8 @@ namespace straat
 				return ret;
 			}}
 
+		public List<Road> roads;
+
 		public Center()
 		{
 			id = idC;
@@ -84,6 +85,8 @@ namespace straat
 			borders = new HashSet<VDEdge>();
 			neighbours = new HashSet<Center>();
 			polygon = new LinkedList<Corner>();
+
+			roads = new List<Road>();
 		}
 
 		public void addCorner(Corner c)
@@ -128,6 +131,19 @@ namespace straat
 		}
 
 		/// <summary>
+		/// Elevation-angle between the specified centers a and b.
+		/// </summary>
+		/// <returns>The angle in degrees.</returns>
+		public static float angle(Center a, Center b)
+		{
+			float distance = Math.Abs((b.position - a.position).Length());
+			float heightDiff = Math.Abs(b.elevation - a.elevation);
+			float angle = (float)Math.Atan2(heightDiff, distance);
+			return MathHelper.ToDegrees(angle);
+		}
+
+
+		/// <summary>
 		///  don't use this! hashes not unique - use hashString() instead
 		/// </summary>
 		public override int GetHashCode()
@@ -147,6 +163,7 @@ namespace straat
 			return o?.position.X == position.X && o?.position.Y == position.Y;
 		}
 			
+
 		/// <summary>
 		/// Used for determining clockwise orientation between two points in relation to a "center" point.
 		/// </summary>
@@ -219,7 +236,7 @@ namespace straat
 				if( !ret )
 					foreach( Center c in touches )
 					{
-						ret = Math.Abs( ( position - c.position ).Length() ) > 200.0f;	// todo: magic number
+						ret = Math.Abs( ( position - c.position ).Length() ) > 2000.0f;	// MAGIC_NUMBER: adjust cutoff to map dimension
 					}
 				return ret;
 			}
@@ -250,7 +267,7 @@ namespace straat
 
 		public float slope {get{return (float)Math.Tan(angle);}}
 
-		public float aspect{get{ return (float)( Math.Atan2( surfaceNormal.X, surfaceNormal.Y ) ); }}
+		public float aspect{get{ return (float)( Math.Atan2( surfaceNormal.Y, surfaceNormal.X ) ); }}
 
 		public Corner()
 		{

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
 using straat.Control;
-
+using straat.Model.Map;
 
 namespace straat.View.Drawing
 {
@@ -30,8 +30,11 @@ namespace straat.View.Drawing
 		public bool drawRivers = true;
 		public bool drawEndOfTheWorld = true;
 		public bool drawTopography = false;
+		public bool drawCities = true;
+		public bool drawRoads = true;
 		public SHADING shadingStyle {get;private set;}
 
+		static float maxElevation = 1.0f;
 
 		public MapDrawer(Game1 game, Map map)
 		{
@@ -129,6 +132,8 @@ namespace straat.View.Drawing
 						GeometryDrawer.fillPolyGradient( d, poly, cCol, polyCol.ToArray() );
 					}
 				}
+
+
  
 				// draw voronoi edges
 				if(drawVoronoiEdges)
@@ -171,6 +176,30 @@ namespace straat.View.Drawing
 						GeometryDrawer.drawLine(a,b,Color.Blue);
 					}
 				}
+
+			// draw settlements
+			if(drawCities)
+				foreach(Settlement s in map.settlements)
+				{
+					Point f = cam.getDrawPos(s.region.position).ToPoint();
+					GeometryDrawer.fillRect(f.X, f.Y, 10, 10, Color.Red);
+				}
+
+			// draw roads
+			if(drawRoads)
+				foreach(Road r in map.roads)
+				{
+					for(int i = 1; i < r.path.Count; ++i)
+					{
+						Vector2 a = cam.getDrawPos(r.path[i - 1].position);
+						Vector2 b = cam.getDrawPos(r.path[i].position);
+
+						a -= Vector2.One;
+						b -= Vector2.One; // HACK: damit man flüsse und straßen gleichzeitig sieht
+
+						GeometryDrawer.drawLine(a, b, Color.Brown);
+					}
+				}
 		}
 
 		public void Update(Input input)
@@ -182,8 +211,9 @@ namespace straat.View.Drawing
 			if( input.pop( InputCommand.G ) ) cycleShading();
 		}
 
-		public Color elevationColourMap(float elevation)
+		public Color elevationColourMap(float elev)
 		{
+			float elevation = elev / maxElevation;
 			// ocean
 			if( elevation == 0.0f )
 				return Color.DarkBlue;
@@ -204,6 +234,11 @@ namespace straat.View.Drawing
 
 			// mountains 0.5 - 0.9
 			return Color.Lerp(Color.LightSlateGray,Color.DarkSlateGray,(elevation-0.5f)*1.0f/0.4f);
+		}
+
+		public static void scaleElevation(float maxElevation)
+		{
+			MapDrawer.maxElevation = maxElevation;
 		}
 
 		public Color aspectBasedShading(float aspect)

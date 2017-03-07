@@ -86,8 +86,8 @@ namespace straat.View
 		public void Update( Input input )
 		{
 			// move camera according to input
-			int speed = 1;
-			if( input.peek( InputCommand.SHIFT_CONT ) ) speed = 10;
+			int speed = 1 * (int)zoomFactor;
+			if( input.peek( InputCommand.SHIFT_CONT ) ) speed = 10 * (int)zoomFactor;
 			if( input.peek( InputCommand.LEFT_CONT ) ) 	position.X -= speed; 
 			if( input.peek( InputCommand.RIGHT_CONT ) ) position.X += speed;
 			if( input.peek( InputCommand.UP_CONT ) ) 	position.Y -= speed;

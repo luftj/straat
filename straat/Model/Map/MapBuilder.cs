@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using System.Linq;
 
-namespace straat
+namespace straat.Model.Map
 {
 	public class MapBuilder
 	{
@@ -22,6 +22,7 @@ namespace straat
 		float dimensions;
 		int numberOfRegions;
 		public float maxElevation { get; private set;}
+		private float desiredElevation; // todo: combine maxelevation and desiredelevation into one
 
 		int numberOfRivers = 30;
 		#endregion
@@ -45,6 +46,7 @@ namespace straat
 			this.dimensions = dimensions;
 			this.numberOfRegions = numberOfRegions;
 			this.maxElevation = maxElevation;
+			desiredElevation = maxElevation;
 		}
 
 		public BenTools.Mathematics.VoronoiGraph createVoronoiGraph()
@@ -282,6 +284,14 @@ namespace straat
 			maxElevation += amount;
 		}
 			
+		public void scaleElevation()
+		{
+			foreach(Center c in map.centers.Values)
+			{
+				c.elevation *= desiredElevation;
+			}
+			maxElevation = desiredElevation;
+		}
 
 		public void smoothen()
 		{
@@ -429,7 +439,7 @@ namespace straat
 		private void drawRiver()
 		{
 			Center curC = map.centers.Values.ElementAt( rng.Next( map.centers.Count ) );
-			while( curC.elevation < 0.5f )
+			while( curC.elevation < 0.5f * maxElevation)
 				curC = map.centers.Values.ElementAt( rng.Next( map.centers.Count ) );
 			River river = new River();
 
@@ -466,9 +476,9 @@ namespace straat
 			map.rivers.Add( river );
 		}
 	
-		private void generateCities()
+		public void generateCities()
 		{
-			int numberOfCities = 10;
+			int numberOfCities = 4;
 
 			while(numberOfCities > 0)
 			{
@@ -480,11 +490,16 @@ namespace straat
 				Settlement newSettlement = new Settlement( pos );
 
 
-				// connect to road network
-				connectToRoadNetwork(newSettlement);
-
-
 				map.settlements.Add(newSettlement);
+				// connect to road network
+				//connectToRoadNetwork(newSettlement);
+
+
+
+				--numberOfCities;
+
+				if(numberOfCities == 0)
+					connectToRoadNetwork(newSettlement);
 			}
 		}
 
@@ -496,6 +511,8 @@ namespace straat
 		private double calculateSettlementInterestFxn(Center c)
 		{
 			double interest = 0.0f;
+
+			// todo: criteria OOP -> delegates <3
 
 			// criterion: slope
 
@@ -527,7 +544,42 @@ namespace straat
 			if( map.settlements.Count == 0 )
 				return;
 
+			// if no roads present, create one
+
+			// else connect
 			// todo
+
+			// add road to Center of curSett
+
+			// TESTING:
+			if(map.settlements.Count > 1)
+			{
+				foreach(Settlement otherS in map.settlements)
+				{
+					if(curSett == otherS) continue;
+					Road r = drawRoad(curSett.region,otherS.region);
+
+					curSett.roads.Add(r);
+					otherS.roads.Add(r);
+
+					map.roads.Add(r);
+				}
+			}
+		}
+
+		private Road drawRoad(Center a, Center b)
+		{
+			var road = new Road();
+
+			var pathf = new Pathfinder(map, Pathfinder.CostFxnType.ROAD);
+
+			var path = pathf.findPath(a, b);
+			foreach(Site s in path)
+			{
+				road.path.Add(s as Center);
+			}
+
+			return road;
 		}
 
 		private Settlement sampleSettlementSeed()

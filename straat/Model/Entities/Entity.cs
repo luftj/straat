@@ -64,7 +64,7 @@ namespace straat.Model.Entities
 			{
 			case OrderType.MOVE:
 				//do something
-				Vector2 goal = (Vector2)standingOrder.data [0];
+				Vector2 goal = (Vector2)standingOrder.data[0];
 				Vector2 direction = goal - worldPos;
 				direction.Normalize();
 				worldPos += direction * speed;

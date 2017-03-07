@@ -5,6 +5,8 @@ using straat.Control;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using straat.Model;
+using straat.Model.Entities;
+using straat.Model.Map;
 
 namespace straat
 {
