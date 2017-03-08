@@ -71,6 +71,7 @@
     <Compile Include="Model\Entities\EntityFactory.cs" />
     <Compile Include="Model\Entities\Order.cs" />
     <Compile Include="Model\Map\Pathfinder.cs" />
+    <Compile Include="View\Drawing\SceneRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">

@@ -22,8 +22,9 @@ namespace straat
         Input InputHandler;
 
         ScreenManager screenManager;
+		public SceneRenderer sceneRenderer; // todo: make static or singleton?
 
-        SpriteFont font;
+		SpriteFont font;
 
 		double simulationTime = 0.0;
 		double simulationSpeed = 1.0;
@@ -69,11 +70,12 @@ namespace straat
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             font = Content.Load<SpriteFont>("testfont");
 
+			sceneRenderer = new SceneRenderer(this, Content.Load<Effect>("sceneShader"));
 
 			// Load content in all singletons
+
 			GeometryDrawer.init(this);
 			EntityFactory.Instance.LoadContent(Content);
         }

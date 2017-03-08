@@ -11,26 +11,33 @@ namespace straat.View
     public class Camera
     {
         public Vector2 position;
+		public float height;
 		// todo: set origin to viewport center (so zooming happens concentrically)
         public float zoom;
 		private float zoomFactor = 2.0f;
+
 		Rectangle viewport;
+
+		public float aspectRatio = 4.0f / 3.0f;//{ get { return viewport.Width / viewport.Height;}}
 
 		public Camera(Rectangle viewport)
         {
             position = Vector2.Zero;
             zoom = 1.0f;
+			height = 10000.0f; // MAGIC_NUMBER: get height from map?
 			this.viewport = viewport;
         }
 
 		public void ZoomIn()
 		{
 			zoom *= zoomFactor;
+			height /= zoomFactor;
 		}
 
 		public void ZoomOut()
 		{
 			zoom /= zoomFactor;
+			height *= zoomFactor;
 		}
 
 		public Vector2 getDrawPos(Vector2 worldPos)

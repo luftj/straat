@@ -141,11 +141,11 @@ namespace straat.View.Screen
 			status += statusstep;
 
 
-			mapDrawer.drawCities = false;
-			statusmsg+="populating cities...\n";
-			mapBuilder.generateCities();
-			mapDrawer.drawCities = true;
-			status += statusstep;
+			//mapDrawer.drawCities = false;
+			//statusmsg+="populating cities...\n";
+			//mapBuilder.generateCities();
+			//mapDrawer.drawCities = true;
+			//status += statusstep;
 
 
 			status = 1.0f;

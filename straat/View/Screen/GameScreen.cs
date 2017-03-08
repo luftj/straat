@@ -26,6 +26,7 @@ namespace straat.View.Screen
 		Center curRegion;
 
 		MapDrawer mapDrawer;
+		SceneRenderer sceneRenderer;
 
 		#region content
 		SpriteFont font;
@@ -41,12 +42,16 @@ namespace straat.View.Screen
 			picker = new Picker( screenManager.game, bounds.Width, bounds.Height );
 
 			camera = new Camera( bounds );
+
+			sceneRenderer = screenManager.game.sceneRenderer; // HACK: ordentlich übergeben
+			sceneRenderer.camera = camera;
 		}
 
 		public void Initialize()
 		{
 			//
 			mapDrawer = new MapDrawer(world.map);
+			sceneRenderer.getVertices(world.map);
 		}
 
 		public void LoadContent()
@@ -90,7 +95,7 @@ namespace straat.View.Screen
 			screenManager.game.GraphicsDevice.Clear(Color.DarkBlue);
 			screenManager.game.spriteBatch.Begin();
 
-			mapDrawer.Draw(camera);
+			//mapDrawer.Draw(camera);
 
 			// highlight region under cursor
 			Vector2 curr = curRegion.position;
@@ -112,6 +117,8 @@ namespace straat.View.Screen
 			}
 			#endregion
 
+			sceneRenderer.Draw(deltaT);
+
 			#region debug_output
 			screenManager.game.spriteBatch.DrawString( font, debugtext, new Vector2( 10, 10 ), Color.White );
 			#endregion
@@ -129,7 +136,10 @@ namespace straat.View.Screen
 			// update world
 			world.Update(deltaT);
 
-			camera.Update( input );		
+			camera.Update( input );
+
+			// refresh scene
+			sceneRenderer.Update(deltaT);
 
 			// debug
 			mapDrawer.Update( input );

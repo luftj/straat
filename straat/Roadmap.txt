@@ -10,6 +10,7 @@ Architecture
 ------------
 - load map-gen parameters from file
 - delaunay traversal for faster lookup of regions
+- only update when there is something to update (various occasions)
 
 Map-Gen
 -------
@@ -21,13 +22,17 @@ Map-Gen
 
 Graphics
 --------
-- port scene drawing to GPU
-- make scene drawing 3D? (establishes shading concept)
+- port scene drawing to GPU completely
+- 3d shading (diffuse)
+- sort vertices -> enable culling
+- texture support
+- daylight/sun
 
 
 Simulation
 ----------
 - entity pathfinding
+- FFF system
 
 
 UI

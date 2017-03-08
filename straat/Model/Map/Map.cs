@@ -39,6 +39,8 @@ namespace straat.Model.Map
 			}
 		}*/
 
+		public Vector3 position3f { get { return new Vector3(position, elevation);}}
+
 		public bool isOcean {get{
 				foreach(Corner c in corners)
 				{
