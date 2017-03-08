@@ -103,14 +103,11 @@ namespace straat
 			if(InputHandler.pop(InputCommand.SPACE))
 				simulationSpeed = simulationSpeed == 0.0 ? 1.0 : 0.0;
 
-            screenManager.Update(gameTime.ElapsedGameTime.TotalMilliseconds, InputHandler);
+			screenManager.Update(gameTime.ElapsedGameTime.TotalSeconds, InputHandler);
 
 
-            if (InputHandler.pop(InputCommand.EXIT))
-                Exit();
-
-
-
+            if (InputHandler.pop(InputCommand.EXIT))    // no active screen intercepted ESC-key, terminate program
+				Exit();
 
             base.Update(gameTime);
         }
@@ -123,7 +120,7 @@ namespace straat
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-			screenManager.Draw(gameTime.ElapsedGameTime.TotalMilliseconds);
+			screenManager.Draw(gameTime.ElapsedGameTime.TotalSeconds);
 
             base.Draw(gameTime);
         }

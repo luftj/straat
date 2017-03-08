@@ -46,12 +46,12 @@ namespace straat.View.Screen
 		public void Initialize()
 		{
 			//
-			mapDrawer = new MapDrawer(screenManager.game,world.map);
+			mapDrawer = new MapDrawer(world.map);
 		}
 
 		public void LoadContent()
 		{
-			font = screenManager.game.Content.Load <SpriteFont > ( "testfont" );
+			font = screenManager.game.Content.Load<SpriteFont>( "testfont" );
 
 			// TESTING
 			world.entities.Add(EntityFactory.Instance.createTestEntity());
@@ -126,6 +126,9 @@ namespace straat.View.Screen
 
 		public void Update( double deltaT, Input input )
 		{
+			// update world
+			world.Update(deltaT);
+
 			camera.Update( input );		
 
 			// debug
@@ -135,6 +138,7 @@ namespace straat.View.Screen
 			int x = input.pointerEvent.X;
 			int y = input.pointerEvent.Y;
 
+			// DEBUG: prints some text
 			#region debug_output
 			Vector2 worldPos = camera.getWorldPos( new Vector2( x, y ) );
 			debugtext = "screen: " + x + ", " + y + "\n";
@@ -148,14 +152,24 @@ namespace straat.View.Screen
 			// handle clicks
 			if( viewport.Bounds.Contains( x, y ) )
 			{
-				if( input.pointerEvent.Command == PointerCommand.PRIMARY || input.pointerEvent.Command == PointerCommand.SECONDARY )
+				if(input.pointerEvent.Command == PointerCommand.PRIMARY)
 				{
 					// pass the new selection to all interested screens
-					selection = picker.getSelection( x - viewport.Bounds.Left, y - viewport.Bounds.Top );
+					selection = picker.getSelection(x - viewport.Bounds.Left, y - viewport.Bounds.Top);
 					if(selection != null)
-						screenManager.addMessage( new ScreenMessage( typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, selection ) );
+						screenManager.addMessage(new ScreenMessage(typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, selection));
 					else
-						screenManager.addMessage( new ScreenMessage( typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, curRegion ) );
+						screenManager.addMessage(new ScreenMessage(typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, curRegion));
+				} else if(input.pointerEvent.Command == PointerCommand.SECONDARY)
+				{
+					// todo: open context menue
+					if(selection != null)
+					{
+						// TESTING: handle with different orders instead
+
+						selection.standingOrder = new Order(OrderType.MOVE, worldPos);
+					}
+
 				}
 			}
 		}

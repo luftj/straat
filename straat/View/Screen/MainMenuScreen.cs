@@ -123,10 +123,11 @@ namespace straat.View.Screen
 //					screenManager.activateScreen( new MainInterfaceScreen( screenManager, b ) );
 					screenManager.deactivateScreen( this );
 					break;
-				case 1:
-					screenManager.deactivateScreen( this );
-					break;
+				//case 1:
+				//	screenManager.deactivateScreen( this );
+				//	break;
 				default:
+					screenManager.deactivateScreen(this);
 					break;
 
 				}

@@ -19,7 +19,6 @@ namespace straat.View.Drawing
 			NUM_SHADINGTYPES
 		}
 
-		Game1 game;
 		Map map;
 
 		public bool drawVoronoiCenters = false;
@@ -36,9 +35,8 @@ namespace straat.View.Drawing
 
 		static float maxElevation = 1.0f;
 
-		public MapDrawer(Game1 game, Map map)
+		public MapDrawer(Map map)
 		{
-			this.game = game;
 			this.map = map;
 
 			shadingStyle = SHADING.TOPOGRAPHIC;
@@ -134,7 +132,6 @@ namespace straat.View.Drawing
 				}
 
 
- 
 				// draw voronoi edges
 				if(drawVoronoiEdges)
 					foreach(VDEdge e in c.borders)
@@ -202,6 +199,7 @@ namespace straat.View.Drawing
 				}
 		}
 
+		// DEBUG: shouldn't be necessary in release
 		public void Update(Input input)
 		{
 			if(input.pop(InputCommand.C)) drawVoronoiCenters = !drawVoronoiCenters;

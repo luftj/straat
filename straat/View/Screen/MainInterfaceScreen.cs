@@ -64,6 +64,8 @@ namespace straat
 			{
 				screenManager.game.spriteBatch.DrawString( font, "currently selected: " + selection?.id, drawPos, Color.White );
 				drawPos.Y += 20;
+				screenManager.game.spriteBatch.DrawString(font, "standing order: " + selection?.standingOrder.type, drawPos, Color.White);
+				drawPos.Y += 20;
 			}
 			if(regionSelected != null)
 			{

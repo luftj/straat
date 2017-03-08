@@ -260,7 +260,6 @@ namespace straat.Model.Map
 			}
 		}
 
-
 		public void normaliseElevation()
 		{
 			foreach(Center c in map.centers.Values)
@@ -478,7 +477,7 @@ namespace straat.Model.Map
 	
 		public void generateCities()
 		{
-			int numberOfCities = 4;
+			int numberOfCities = 2;
 
 			while(numberOfCities > 0)
 			{
@@ -571,7 +570,7 @@ namespace straat.Model.Map
 		{
 			var road = new Road();
 
-			var pathf = new Pathfinder(map, Pathfinder.CostFxnType.ROAD);
+			var pathf = new Pathfinder(Pathfinder.CostFxnType.ROAD);
 
 			var path = pathf.findPath(a, b);
 			foreach(Site s in path)

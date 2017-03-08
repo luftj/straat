@@ -36,7 +36,7 @@ namespace straat.Model.Map
 				if(angle <= 10.0f) factor = 1.0f;
 				else factor = angle / 5.0f;  // MAGIC_NUMBER: think of a more useful factor
 				// more altitude difference between a and b -> higher cost
-				return factor * (b.site.position - a.site.position).Length();
+				return factor * (b.site.position - a.site.position).Length(); // may not be squared (not associative)
 			}
 
 			private float cost_Travel(AStarNode a, AStarNode b)
@@ -44,15 +44,14 @@ namespace straat.Model.Map
 				if(!(a.site is Center && b.site is Center))
 					throw new NotImplementedException("TRAVEL pathfinding so far only works on region Centers");
 
-				// todo: get factor from map somehow
-				// terrain factor * euclidian distance
 				float factor = 1.0f;
-
 				if((a.site as Center).roads.Union((b.site as Center).roads).Count() > 0)
 				{
 					factor = 0.3f;
 				} //else // todo: handle terrain types
-				return factor * (b.site.position - a.site.position).Length(); // todo: sqrt necessary?
+
+				// terrain factor * euclidian distance
+				return factor * (b.site.position - a.site.position).Length(); // may not be squared (not associative)
 			}
 
 
@@ -103,19 +102,17 @@ namespace straat.Model.Map
 			}
 		}
 
-		Map map;
 		CostFxnType type;
 
 		List<AStarNode> openList;
 		List<AStarNode> closedList;
 
 
-		public Pathfinder(Map map, CostFxnType type = CostFxnType.TRAVEL)
+		public Pathfinder(CostFxnType type = CostFxnType.TRAVEL)
 		{
 			openList = new List<AStarNode>();
 			closedList = new List<AStarNode>();
 
-			this.map = map;
 			this.type = type;
 		}
 

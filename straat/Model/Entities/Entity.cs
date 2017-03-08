@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using straat.Model.Map;
 
 namespace straat.Model.Entities
 {
@@ -26,12 +27,13 @@ namespace straat.Model.Entities
 		public int id { get; private set;}
 		private static int idCounter = 1234;
 
-		float speed;
+		float speed = 2.0f; // in m/s
 
 		string faction;
 
-		Order standingOrder;
-
+		Map.Map map;
+		public Order standingOrder;
+		List<Site> movementPath;
 
         public Entity()
         {
@@ -39,6 +41,8 @@ namespace straat.Model.Entities
 
 			id = idCounter;
 			++idCounter;
+
+			standingOrder = new Order(OrderType.NONE);
         } 
 
 		public Entity( GraphicsComponent gc, SelectableComponent sc ) : this()
@@ -66,9 +70,18 @@ namespace straat.Model.Entities
 				//do something
 				Vector2 goal = (Vector2)standingOrder.data[0];
 				Vector2 direction = goal - worldPos;
-				direction.Normalize();
-				worldPos += direction * speed;
+				if(direction.Length() < speed * (float)deltaT)
+				{
+					worldPos = goal;
+					standingOrder = new Order(OrderType.NONE);
+				} else {
+					direction.Normalize();
+					worldPos += direction * speed * (float)deltaT;
+				}
 				// TODO: pathfinding
+				//if(movementPath == null)
+				//	movementPath = new Pathfinder().findPath(map.getRegionAt(worldPos), map.getRegionAt(goal));
+
 				break;
 
 			case OrderType.NONE:

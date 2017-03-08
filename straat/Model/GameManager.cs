@@ -17,6 +17,8 @@ namespace straat.Model
 
 		public int seed;
 
+		double simSpeed = 1.0;
+		double oldSimSpeed = 1.0;
 
 		public GameManager()
 		{
@@ -29,9 +31,16 @@ namespace straat.Model
 		/// <param name="deltaT">time elapsed since last tick.</param>
 		public void Update(double deltaT)
 		{
+			// handele simulation time
+			double simDT = deltaT * simSpeed;
+
 			// update world (towns, ...)
 
 			// move entities
+			foreach(Entity e in entities)
+			{
+				e.update(simDT);
+			}
 
 			// handle world events
 
@@ -67,6 +76,17 @@ namespace straat.Model
 					ret.Add( item );
 			}
 			return ret;
+		}
+
+		public void pauseUnpauseGame()
+		{
+			if(simSpeed == 0.0)
+				simSpeed = oldSimSpeed;
+			else
+			{
+				oldSimSpeed = simSpeed;
+				simSpeed = 0.0;
+			}
 		}
 	}
 }

@@ -388,6 +388,11 @@ namespace straat.Model.Map
 			roads = new List<Road>();
 		}
 
+		public Center getRegionAt(Vector2 worldPos)
+		{
+			return getRegionAt(worldPos.X, worldPos.Y);
+		}
+			
 		public Center getRegionAt(float x, float y)
 		{
 			// todo: use delaunay traversal instead

@@ -65,7 +65,7 @@ namespace straat.View.Screen
 			statusmsg+="initialising mapbuilder...\n";
 
 			float dimension = 20480.0f; // 1.0f == 1m
-			cam.zoom /= 2.0f;
+			cam.zoom /= 20.0f;
 			cam.position -= new Vector2( dimension / 2.0f );
 			cam.position.X -= viewport.Width / 2.0f;
 
@@ -78,7 +78,7 @@ namespace straat.View.Screen
 			
 			statusmsg+="converting Voronoi graph...\n";
 			world.map = mapBuilder.buildMapFromGraph( voronoiGraph );
-			mapDrawer = new MapDrawer( screenManager.game, world.map );
+			mapDrawer = new MapDrawer( world.map );
 			status += statusstep;
 			statusmsg += "fixing Holes...\n";
 			mapBuilder.fixHoles();
@@ -168,6 +168,7 @@ namespace straat.View.Screen
 				GameScreen gs = new GameScreen( screenManager, a );
 				gs.world = world;
 				screenManager.activateScreen( gs );
+				// todo: mainIS.world?
 				screenManager.activateScreen( new MainInterfaceScreen( screenManager, b ) );
 				screenManager.deactivateScreen( this );
 			}

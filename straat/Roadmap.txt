@@ -1,0 +1,45 @@
+﻿=================================
+Milestones, Todo, Version history
+=================================
+
+
+TODO
+====
+
+Architecture
+------------
+- load map-gen parameters from file
+
+Map-Gen
+-------
+- settlement interest fxn
+- settlement road connection
+- settlement growth scenario
+- interpolate and smoothen roads/rivers with splines
+
+
+Graphics
+--------
+- port scene drawing to GPU
+- make scene drawing 3D? (establishes shading concept)
+
+
+Simulation
+----------
+- entity pathfinding
+
+
+UI
+--
+- RMB context menu
+- smoothen camera control
+
+
+Naming
+------
+- Rivers
+- Roads
+- Cities
+- Characters
+
+

@@ -115,4 +115,7 @@
       <Name>FortuneVoronoi</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Roadmap.txt" />
+  </ItemGroup>
 </Project>
