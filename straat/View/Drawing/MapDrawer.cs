@@ -39,7 +39,7 @@ namespace straat.View.Drawing
 		{
 			this.map = map;
 
-			shadingStyle = SHADING.TOPOGRAPHIC;
+			shadingStyle = SHADING.DIFFUSE;
 		}
 
 		public void Draw(straat.View.Camera cam)
@@ -258,15 +258,16 @@ namespace straat.View.Drawing
 
 		public Color diffuseReflection(Vector3 normal)
 		{
-			Vector3 light = new Vector3( 1, 1, -1 );
+			Vector3 light = new Vector3(1.0f, 1.0f, -1.0f );
 			light.Normalize();
 
-			double dot = Vector3.Dot( normal, light );
-			double angle = Math.Acos( dot);
+			double dot = Vector3.Dot( normal, light ); // returns cos of angle between normal and light
 
-			float value = (float)( angle /Math.PI);
+			// cos is 1 with angle = 0° and 0  with angle = 90°
+			// should be 1 with 180° and 0 with 0 degrees and in [0,1]
+			float value = ((float)dot * -1.0f); //- 1.0f) * -1.0f / 2.0f;//(float)( angle /Math.PI);
 
-			return Color.Lerp( Color.White, Color.Black, value );
+			return Color.Lerp( Color.Black, Color.White, value );
 		}
 
 		public Color hillShading(Corner roi)

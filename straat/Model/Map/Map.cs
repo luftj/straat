@@ -246,12 +246,14 @@ namespace straat.Model.Map
 				if( touches.Count < 3 )
 					return Vector3.UnitZ;
 
-				Vector2 au = touches.ElementAt( 0 ).position;
-				au.Normalize();
-				Vector2 bu = touches.ElementAt( 1 ).position;
-				bu.Normalize();
-				Vector3 a = new Vector3( au, touches.ElementAt(0).elevation );
-				Vector3 b = new Vector3( bu, touches.ElementAt(1).elevation );
+				Vector2 au = this.position - touches.ElementAt( 0 ).position;
+				//au.Normalize();
+				Vector2 bu = this.position - touches.ElementAt( 1 ).position;
+				//bu.Normalize();
+				Vector3 a = new Vector3( au, elevation - touches.ElementAt(0).elevation );
+				Vector3 b = new Vector3( bu, elevation - touches.ElementAt(1).elevation );
+				//a.Normalize();
+				//b.Normalize();
 
 				Vector3 N = Vector3.Cross( a, b );
 				N.Normalize();
