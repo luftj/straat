@@ -322,7 +322,7 @@ namespace straat.Model.Map
 		/// </summary>
 		/// <param name="threshold">Threshold [0,1].</param>
 		/// <param name="factor">Factor [0,1].</param>
-		public void smoothenMinima(float threshold, float factor)
+		public void smoothenMinima(float threshold, float factor) // todo: full rewrite
 		{
 			foreach(Center c in map.centers.Values)
 			{
@@ -438,7 +438,7 @@ namespace straat.Model.Map
 		private void drawRiver()
 		{
 			Center curC = map.centers.Values.ElementAt( rng.Next( map.centers.Count ) );
-			while( curC.elevation < 0.5f * maxElevation)
+			while( curC.elevation < 0.5f * maxElevation)	// MAGIC_NUMBER: spring height should be a world-gen param
 				curC = map.centers.Values.ElementAt( rng.Next( map.centers.Count ) );
 			River river = new River();
 
@@ -448,6 +448,8 @@ namespace straat.Model.Map
 
 				if( curC.isOcean )
 					break;
+				if(curC.elevation == 0.0f) 
+					break; // todo: should be ocean then...
 
 				bool mounded = false;
 				foreach( River r in map.rivers )
@@ -456,6 +458,7 @@ namespace straat.Model.Map
 						if( curC.Equals( c ) )
 						{
 							river.flowsInto = r;
+							if(river.path.Count > 1) r.width += river.width;	// todo: this widens the whole length of the river, respect increasing width
 							mounded = true;
 							break;
 						}

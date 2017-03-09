@@ -93,6 +93,7 @@ namespace straat.View.Drawing
 			getTerrainVertices(map, vertices);
 
 			getRiverVertices(map,vertices);
+			getRoadVertices(map,vertices);
 
 			this.vertices = vertices.ToArray();
 		}
@@ -113,40 +114,53 @@ namespace straat.View.Drawing
 			}
 		}
 
+		private void getPathVertices(List<VertexPositionColorNormal> vertexList, List<Center> path, float width, Color colour)
+		{
+			for(int i = 1; i < path.Count; ++i)
+			{
+				var prevC = path[i - 1];
+				var curC = path[i];
+
+				Vector2 riverSegment = curC.position - prevC.position;
+				// make quad between previous and current river node
+				float heightoffset = 0.2f;	// MAGIC_NUMBER: height offset kind of depends on the slope
+				float widthOffset = width / 2.0f;
+				Vector2 latOffset = new Vector2(widthOffset, 0.0f);
+				//find vector orthogonal to river path
+				Vector2 riverSpan = (latOffset - riverSegment * 1 / Vector2.Dot(riverSegment, latOffset)) * latOffset.Length();
+
+				Vector3 v1 = new Vector3(prevC.position + riverSpan, prevC.elevation + heightoffset);
+				Vector3 v2 = new Vector3(prevC.position - riverSpan, prevC.elevation + heightoffset);
+				Vector3 v3 = new Vector3(curC.position + riverSpan, curC.elevation + heightoffset);
+				Vector3 v4 = new Vector3(curC.position - riverSpan, curC.elevation + heightoffset);
+
+				Vector4 N = new Vector4(prevC.Normal + curC.Normal, 1.0f);
+				N.Normalize();
+
+				vertexList.Add(new VertexPositionColorNormal(v1, colour.ToVector4(), N));
+				vertexList.Add(new VertexPositionColorNormal(v2, colour.ToVector4(), N));
+				vertexList.Add(new VertexPositionColorNormal(v3, colour.ToVector4(), N));
+				++numTris;
+				vertexList.Add(new VertexPositionColorNormal(v2, colour.ToVector4(), N));
+				vertexList.Add(new VertexPositionColorNormal(v3, colour.ToVector4(), N));
+				vertexList.Add(new VertexPositionColorNormal(v4, colour.ToVector4(), N));
+				++numTris;
+			}
+		}
+
 		private void getRiverVertices(Map map, List<VertexPositionColorNormal> vertexList)
 		{
 			foreach(River r in map.rivers)
 			{
-				for(int i = 1; i < r.path.Count; ++i)
-				{
-					var prevC = r.path[i - 1];
-					var curC = r.path[i];
+				getPathVertices(vertexList, r.path, r.width, Color.DarkBlue);
+			}
+		}
 
-					Vector2 riverSegment = curC.position - prevC.position;
-					// make quad between previous and current river node
-					float heightoffset = 1.0f;
-					float widthOffset = r.width / 2.0f;
-					Vector2 latOffset = new Vector2(widthOffset, 0.0f);
-					//find vector orthogonal to river path
-					Vector2 riverSpan = (latOffset - riverSegment*1/Vector2.Dot(riverSegment, latOffset)) * latOffset.Length();
-
-					Vector3 v1 = new Vector3(prevC.position + riverSpan, prevC.elevation + heightoffset);
-					Vector3 v2 = new Vector3(prevC.position - riverSpan, prevC.elevation + heightoffset);
-					Vector3 v3 = new Vector3(curC.position + riverSpan, prevC.elevation + heightoffset);
-					Vector3 v4 = new Vector3(curC.position + riverSpan, prevC.elevation + heightoffset);
-
-					Vector4 N = new Vector4(prevC.Normal + curC.Normal, 1.0f);
-					N.Normalize();
-
-					vertexList.Add(new VertexPositionColorNormal(v1, Color.Blue.ToVector4(), N));
-					vertexList.Add(new VertexPositionColorNormal(v2, Color.Blue.ToVector4(), N));
-					vertexList.Add(new VertexPositionColorNormal(v3, Color.Blue.ToVector4(), N));
-					++numTris;
-					vertexList.Add(new VertexPositionColorNormal(v2, Color.Blue.ToVector4(), N));
-					vertexList.Add(new VertexPositionColorNormal(v3, Color.Blue.ToVector4(), N));
-					vertexList.Add(new VertexPositionColorNormal(v4, Color.Blue.ToVector4(), N));
-					++numTris;
-				}
+		private void getRoadVertices(Map map, List<VertexPositionColorNormal> vertexList)
+		{
+			foreach(Road r in map.roads)
+			{
+				getPathVertices(vertexList, r.path, r.width, Color.Brown);
 			}
 		}
 

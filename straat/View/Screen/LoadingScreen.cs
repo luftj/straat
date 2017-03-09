@@ -66,10 +66,10 @@ namespace straat.View.Screen
 
 			float dimension = 20480.0f; // 1.0f == 1m
 			cam.zoom /= 20.0f;
-			cam.position3f -= new Vector3(dimension / 2.0f, dimension / 2.0f, 0.0f);
+			cam.position3f -= new Vector3(dimension / 2.0f, -dimension / 2.0f, 0.0f); // -Y for inverted camera of 2D drawing
 			cam.position3f.X -= viewport.Width / 2.0f;
 
-			mapBuilder = new MapBuilder( dimension, 8194, 2560.0f, seed );
+			mapBuilder = new MapBuilder( dimension, 16388, 2560.0f, seed );
 			status += statusstep;
 
 			statusmsg+="generating Voronoi graph...\n";
@@ -90,8 +90,6 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			//mapBuilder.applyCone(1.0f);
 			status += statusstep;
-
-			//mapBuilder.applyCone(1.0f);
 
 			statusmsg+="normalising Elevation...\n";
 			mapBuilder.normaliseElevation();
@@ -125,15 +123,6 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
-			//mapBuilder.smoothenMinima( 0.7f, 1.0f );
-			//mapBuilder.smoothenMinima(0.5f, 1.0f);
-			//mapBuilder.smoothenMinima(0.5f, 1.0f);
-			//mapBuilder.smoothenMinima( 0.4f, 0.6f );
-			//mapBuilder.smoothenMinima(0.4f, 0.6f);
-			//mapBuilder.smoothenMinima(0.4f, 0.6f);
-			//mapBuilder.smoothenMinima( 0.1f, 0.3f );
-
-
 			// todo: noch höher?
 			statusmsg += "adjusting scale...\n";
 			mapBuilder.scaleElevation();
@@ -147,11 +136,11 @@ namespace straat.View.Screen
 			status += statusstep;
 
 
-			//mapDrawer.drawCities = false;
-			//statusmsg+="populating cities...\n";
-			//mapBuilder.generateCities();
-			//mapDrawer.drawCities = true;
-			//status += statusstep;
+			mapDrawer.drawCities = false;
+			statusmsg+="populating cities...\n";
+			mapBuilder.generateCities();
+			mapDrawer.drawCities = true;
+			status += statusstep;
 
 
 			status = 1.0f;

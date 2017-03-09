@@ -33,6 +33,7 @@ Map-Gen
 Graphics
 --------
 - port scene drawing to GPU completely
+- fix error with vertical river/road surfaces
 - terrain mesh smoothing/surface subdivision
 - terrain mesh self shadowing
 - sort vertices -> enable culling
