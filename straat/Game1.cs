@@ -22,7 +22,6 @@ namespace straat
         Input InputHandler;
 
         ScreenManager screenManager;
-		public SceneRenderer sceneRenderer; // todo: make static or singleton?
 
 		SpriteFont font;
 
@@ -71,8 +70,6 @@ namespace straat
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             font = Content.Load<SpriteFont>("testfont");
-
-			sceneRenderer = new SceneRenderer(this, Content.Load<Effect>("sceneShader"));
 
 			// Load content in all singletons
 

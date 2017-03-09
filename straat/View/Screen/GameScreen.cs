@@ -43,14 +43,15 @@ namespace straat.View.Screen
 
 			camera = new Camera( bounds );
 
-			sceneRenderer = screenManager.game.sceneRenderer; // HACK: ordentlich übergeben
+			sceneRenderer = new SceneRenderer(screenManager.game);
 			sceneRenderer.camera = camera;
 		}
 
 		public void Initialize()
 		{
-			//
+			// initialise everything we couldn't do in ctor
 			mapDrawer = new MapDrawer(world.map);
+			sceneRenderer.mapDrawer = mapDrawer;
 			sceneRenderer.getVertices(world.map);
 		}
 
@@ -58,6 +59,7 @@ namespace straat.View.Screen
 		{
 			font = screenManager.game.Content.Load<SpriteFont>( "testfont" );
 
+			sceneRenderer.init(screenManager.game.Content.Load<Effect>("sceneShader"));
 			// TESTING
 			world.entities.Add(EntityFactory.Instance.createTestEntity());
 		}
@@ -95,6 +97,7 @@ namespace straat.View.Screen
 			screenManager.game.GraphicsDevice.Clear(Color.DarkBlue);
 			screenManager.game.spriteBatch.Begin();
 
+			// todo: 2d/3d select somewhere?
 			//mapDrawer.Draw(camera);
 
 			// highlight region under cursor

@@ -66,8 +66,8 @@ namespace straat.View.Screen
 
 			float dimension = 20480.0f; // 1.0f == 1m
 			cam.zoom /= 20.0f;
-			cam.position -= new Vector2( dimension / 2.0f );
-			cam.position.X -= viewport.Width / 2.0f;
+			cam.position3f -= new Vector3(dimension / 2.0f, dimension / 2.0f, 0.0f);
+			cam.position3f.X -= viewport.Width / 2.0f;
 
 			mapBuilder = new MapBuilder( dimension, 8194, 2560.0f, seed );
 			status += statusstep;
@@ -90,6 +90,8 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			//mapBuilder.applyCone(1.0f);
 			status += statusstep;
+
+			//mapBuilder.applyCone(1.0f);
 
 			statusmsg+="normalising Elevation...\n";
 			mapBuilder.normaliseElevation();
@@ -123,8 +125,12 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
-			//mapBuilder.smoothenMinima( 0.5f, 1.0f );
+			//mapBuilder.smoothenMinima( 0.7f, 1.0f );
+			//mapBuilder.smoothenMinima(0.5f, 1.0f);
+			//mapBuilder.smoothenMinima(0.5f, 1.0f);
 			//mapBuilder.smoothenMinima( 0.4f, 0.6f );
+			//mapBuilder.smoothenMinima(0.4f, 0.6f);
+			//mapBuilder.smoothenMinima(0.4f, 0.6f);
 			//mapBuilder.smoothenMinima( 0.1f, 0.3f );
 
 
@@ -134,11 +140,11 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
-			mapDrawer.drawRivers = false;
-			statusmsg+="drawing rivers...\n";
-			mapBuilder.applyRivers();
-			mapDrawer.drawRivers = true;
-			status += statusstep;
+			//mapDrawer.drawRivers = false;
+			//statusmsg+="drawing rivers...\n";
+			//mapBuilder.applyRivers();
+			//mapDrawer.drawRivers = true;
+			//status += statusstep;
 
 
 			//mapDrawer.drawCities = false;

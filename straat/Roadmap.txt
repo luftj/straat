@@ -6,16 +6,25 @@ Milestones, Todo, Version history
 TODO
 ====
 
+Concept
+-------
+- battle mechanics
+- AI strategies
+- world events + story
+
+
 Architecture
 ------------
+- fix program termination
 - load map-gen parameters from file
 - delaunay traversal for faster lookup of regions
 - only update when there is something to update (various occasions)
+- localisation support
 
 Map-Gen
 -------
 - settlement interest fxn
-- settlement road connection
+- road network connection
 - settlement growth scenario
 - interpolate and smoothen roads/rivers with splines
 
@@ -23,22 +32,26 @@ Map-Gen
 Graphics
 --------
 - port scene drawing to GPU completely
-- 3d shading (diffuse)
+- terrain self shadowing
 - sort vertices -> enable culling
 - texture support
 - daylight/sun
+- raytracing for mouse interaction etc
 
 
 Simulation
 ----------
 - entity pathfinding
-- FFF system
+- AI
+- environment (city growth etc)
 
 
 UI
 --
+- camera control (cap zoom, smoothen movement, rotation?)
+- simulation speed control
 - RMB context menu
-- smoothen camera control
+- FFF system conversion
 
 
 Naming
@@ -49,3 +62,33 @@ Naming
 - Characters
 
 
+Version History
+===============
+
+v0.0
+----
+- 3d shading (diffuse)
+
+
+
+Milestones
+=======
+
+v0.8 - Alpha
+------------
+Feature complete
+gameplay flaws fixed
+pitch ready
+
+v0.9 - Beta
+-----------
+Content and feature complete -> Code freeze
+all critical bugs fixed
+gameplpay and params tweaked
+packaging and deployment
+game settings adjustable
+
+v1.0 - Release
+--------------
+all bugs fixed
+compatibility tested
