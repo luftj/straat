@@ -140,11 +140,11 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
-			//mapDrawer.drawRivers = false;
-			//statusmsg+="drawing rivers...\n";
-			//mapBuilder.applyRivers();
-			//mapDrawer.drawRivers = true;
-			//status += statusstep;
+			mapDrawer.drawRivers = false;
+			statusmsg+="drawing rivers...\n";
+			mapBuilder.applyRivers();
+			mapDrawer.drawRivers = true;
+			status += statusstep;
 
 
 			//mapDrawer.drawCities = false;

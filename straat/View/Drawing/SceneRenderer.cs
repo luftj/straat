@@ -90,6 +90,15 @@ namespace straat.View.Drawing
 			numTris = 0;
 			var vertices = new List<VertexPositionColorNormal>();
 
+			getTerrainVertices(map, vertices);
+
+			getRiverVertices(map,vertices);
+
+			this.vertices = vertices.ToArray();
+		}
+
+		private void getTerrainVertices(Map map, List<VertexPositionColorNormal> vertexList)
+		{
 			foreach(Corner c in map.corners.Values)
 			{
 				if(c.touches.Count != 3) continue;
@@ -98,11 +107,47 @@ namespace straat.View.Drawing
 				{
 					Vector4 N = new Vector4(v.Normal, 1.0f);
 					//N.Normalize();
-					vertices.Add(new VertexPositionColorNormal(v.position3f,mapDrawer.elevationColourMap(v.elevation).ToVector4(),N));
+					vertexList.Add(new VertexPositionColorNormal(v.position3f, mapDrawer.elevationColourMap(v.elevation).ToVector4(), N));
 				}
 				++numTris;
 			}
-			this.vertices = vertices.ToArray();
+		}
+
+		private void getRiverVertices(Map map, List<VertexPositionColorNormal> vertexList)
+		{
+			foreach(River r in map.rivers)
+			{
+				for(int i = 1; i < r.path.Count; ++i)
+				{
+					var prevC = r.path[i - 1];
+					var curC = r.path[i];
+
+					Vector2 riverSegment = curC.position - prevC.position;
+					// make quad between previous and current river node
+					float heightoffset = 1.0f;
+					float widthOffset = r.width / 2.0f;
+					Vector2 latOffset = new Vector2(widthOffset, 0.0f);
+					//find vector orthogonal to river path
+					Vector2 riverSpan = (latOffset - riverSegment*1/Vector2.Dot(riverSegment, latOffset)) * latOffset.Length();
+
+					Vector3 v1 = new Vector3(prevC.position + riverSpan, prevC.elevation + heightoffset);
+					Vector3 v2 = new Vector3(prevC.position - riverSpan, prevC.elevation + heightoffset);
+					Vector3 v3 = new Vector3(curC.position + riverSpan, prevC.elevation + heightoffset);
+					Vector3 v4 = new Vector3(curC.position + riverSpan, prevC.elevation + heightoffset);
+
+					Vector4 N = new Vector4(prevC.Normal + curC.Normal, 1.0f);
+					N.Normalize();
+
+					vertexList.Add(new VertexPositionColorNormal(v1, Color.Blue.ToVector4(), N));
+					vertexList.Add(new VertexPositionColorNormal(v2, Color.Blue.ToVector4(), N));
+					vertexList.Add(new VertexPositionColorNormal(v3, Color.Blue.ToVector4(), N));
+					++numTris;
+					vertexList.Add(new VertexPositionColorNormal(v2, Color.Blue.ToVector4(), N));
+					vertexList.Add(new VertexPositionColorNormal(v3, Color.Blue.ToVector4(), N));
+					vertexList.Add(new VertexPositionColorNormal(v4, Color.Blue.ToVector4(), N));
+					++numTris;
+				}
+			}
 		}
 
 		public void Update(double deltaT)

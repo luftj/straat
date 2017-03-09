@@ -23,6 +23,7 @@ Architecture
 
 Map-Gen
 -------
+- reimplement terrain smoothing
 - settlement interest fxn
 - road network connection
 - settlement growth scenario
@@ -32,7 +33,8 @@ Map-Gen
 Graphics
 --------
 - port scene drawing to GPU completely
-- terrain self shadowing
+- terrain mesh smoothing/surface subdivision
+- terrain mesh self shadowing
 - sort vertices -> enable culling
 - texture support
 - daylight/sun

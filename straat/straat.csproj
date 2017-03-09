@@ -72,6 +72,7 @@
     <Compile Include="Model\Entities\Order.cs" />
     <Compile Include="Model\Map\Pathfinder.cs" />
     <Compile Include="View\Drawing\SceneRenderer.cs" />
+    <Compile Include="Model\Map\River.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">
