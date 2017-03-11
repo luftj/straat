@@ -27,6 +27,7 @@ namespace straat.View.Screen
 
 		MapDrawer mapDrawer;
 		SceneRenderer sceneRenderer;
+		DropdownMenu contextMenu;
 
 		#region content
 		SpriteFont font;
@@ -53,6 +54,8 @@ namespace straat.View.Screen
 			mapDrawer = new MapDrawer(world.map);
 			sceneRenderer.mapDrawer = mapDrawer;
 			sceneRenderer.getVertices(world.map);
+
+			camera.zoom = 0.1f;
 		}
 
 		public void LoadContent()
@@ -61,7 +64,11 @@ namespace straat.View.Screen
 
 			sceneRenderer.init(screenManager.game.Content.Load<Effect>("sceneShader"));
 			// TESTING
-			world.entities.Add(EntityFactory.Instance.createTestEntity());
+			world.entities.Add(EntityFactory.Instance.createTestEntity(new Vector3(0,0,0)));
+
+			contextMenu = new DropdownMenu(screenManager.game.spriteBatch, font);
+			contextMenu.addEntry(OrderType.MOVE);
+			contextMenu.addEntry(OrderType.AMBUSH);
 		}
 
 		public void UnloadContent()
@@ -94,11 +101,14 @@ namespace straat.View.Screen
 
 			#region scene_drawing
 			// draw world
-			screenManager.game.GraphicsDevice.Clear(Color.DarkBlue);
+			//Matrix transform = camera.viewMatrix * Matrix.CreateScale(viewport.Width, -viewport.Height, 1) * Matrix.CreateTranslation(viewport.Width / 2, viewport.Height / 2, 100);
+			screenManager.game.GraphicsDevice.Clear(Color.LightBlue);
 			screenManager.game.spriteBatch.Begin();
 
+
+
 			// todo: 2d/3d select somewhere?
-			//mapDrawer.Draw(camera);
+			mapDrawer.Draw(camera);
 
 			// highlight region under cursor
 			Vector2 curr = curRegion.position;
@@ -109,14 +119,14 @@ namespace straat.View.Screen
 			foreach( Entity entity in world.getDrawableEntities() )
 			{
 				//  consider screen boundaries
-				if( !camera.isInBounds( entity.worldPos) ) 					// todo: check for rectangle of texture instead
-					continue;
+				//if( !camera.isInBounds( entity.worldPos) ) 					// todo: check for rectangle of texture instead
+				//	continue;
 
 				Vector2 drawingPos = camera.getDrawPos(entity.worldPos);
 
 				// is in view: draw world object
 				Color curCol = entity.getAllegiance() == Allegiance.PLAYER ? Color.Blue : Color.Red;
-				screenManager.game.spriteBatch.Draw(entity.gc.texture,drawingPos,scale:new Vector2(camera.zoom),color:curCol);
+				screenManager.game.spriteBatch.Draw(entity.gc.texture,drawingPos,color:curCol);
 			}
 			#endregion
 
@@ -125,6 +135,8 @@ namespace straat.View.Screen
 			#region debug_output
 			screenManager.game.spriteBatch.DrawString( font, debugtext, new Vector2( 10, 10 ), Color.White );
 			#endregion
+
+			contextMenu.Draw();
 
 			#region end_draw
 			screenManager.game.spriteBatch.End();
@@ -153,13 +165,16 @@ namespace straat.View.Screen
 
 			// DEBUG: prints some text
 			#region debug_output
-			Vector2 worldPos = camera.getWorldPos( new Vector2( x, y ) );
+			Vector3? r = sceneRenderer.rayCast(x, y); // todo: encapsulate screenPos->worldPos
+			r = r ?? Vector3.Zero;
+			Vector2 worldPos = new Vector2(((Vector3)r).X,((Vector3)r).Y);//camera.getWorldPos( new Vector2( x, y ) );
 			debugtext = "screen: " + x + ", " + y + "\n";
 			debugtext += "world: " + worldPos.X + ", " + worldPos.Y;
 			curRegion = world.map.getRegionAt( worldPos.X, worldPos.Y );
 			debugtext += ", elevation: " + curRegion.elevation + ", id: "+ curRegion.id + "\n";
 			debugtext += "seed: " + world.seed + "\n";
-			debugtext += mapDrawer.shadingStyle.ToString();
+			debugtext += mapDrawer.shadingStyle.ToString()+"\n";
+			debugtext += "cam height: " + camera.height;
 			#endregion
 
 			// handle clicks
@@ -167,6 +182,15 @@ namespace straat.View.Screen
 			{
 				if(input.pointerEvent.Command == PointerCommand.PRIMARY)
 				{
+					if(selection != null && contextMenu.isInBounds(new Point(x,y)))
+					{
+						r = sceneRenderer.rayCast(contextMenu.bounds.Location.X, contextMenu.bounds.Location.Y);
+						r = r ?? Vector3.Zero;
+						worldPos = new Vector2(((Vector3)r).X, ((Vector3)r).Y);
+						selection.standingOrder = new Order((OrderType)contextMenu.click(new Point(x, y)), worldPos);
+						return;
+					}
+
 					// pass the new selection to all interested screens
 					selection = picker.getSelection(x - viewport.Bounds.Left, y - viewport.Bounds.Top);
 					if(selection != null)
@@ -175,14 +199,15 @@ namespace straat.View.Screen
 						screenManager.addMessage(new ScreenMessage(typeof(InterfaceScreen), ScreenMessageType.SELECTION_CHANGE, curRegion));
 				} else if(input.pointerEvent.Command == PointerCommand.SECONDARY)
 				{
-					// todo: open context menue
 					if(selection != null)
 					{
-						// TESTING: handle with different orders instead
-
-						selection.standingOrder = new Order(OrderType.MOVE, worldPos);
+						// what is here?
+						// other entity
+						// player entity
+						// city
+						// just the scene
+						contextMenu.open(new Point(x,y));
 					}
-
 				}
 			}
 		}

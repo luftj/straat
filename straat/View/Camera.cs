@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using straat.Control;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace straat.View
 {
@@ -21,10 +22,13 @@ namespace straat.View
 		// todo: set origin to viewport center (so zooming happens concentrically)
         public float zoom;
 		private float zoomFactor = 2.0f;
+		float farplane = 100000.0f;
 
 		public Matrix viewMatrix { get; private set;}
+		public Matrix projection;
 
 		Rectangle viewport;
+		Vector2 screenOrigin { get { return new Vector2(viewport.Width / 2.0f, viewport.Height / 2.0f); } }
 
 		public float aspectRatio { get { return (float)viewport.Width / (float)viewport.Height;}}
 
@@ -34,9 +38,10 @@ namespace straat.View
 			zoom = 1.0f;
 
 			position3f = Vector3.Zero;
-			position3f.Z = 10000.0f; // MAGIC_NUMBER: get height from map?
+			position3f.Z = 5000.0f; // MAGIC_NUMBER: get height from map?
 			//target3f = new Vector3(position, 0.0f);
-			viewMatrix = Matrix.CreateLookAt(position3f, target3f, Vector3.UnitZ);
+			viewMatrix = Matrix.Identity;
+			projection = Matrix.CreatePerspectiveFieldOfView((float)(Math.PI / 4.0), 1, 1.0f, farplane);
         }
 
 		public void ZoomIn()
@@ -53,13 +58,46 @@ namespace straat.View
 
 		public Vector2 getDrawPos(Vector2 worldPos)
 		{
+			return getDrawPos(new Vector3(worldPos, 1.0f));
 			Vector2 position = this.position;
 			position.Y *= -1.0f;
-			return (worldPos - position) * zoom;
+			return (worldPos - position) * zoom + screenOrigin;
+		}
+		public Vector2 getDrawPos(Vector3 worldPos)
+		{
+			Viewport test = new Viewport(viewport);
+			//Matrix model = Matrix.CreateTranslation(viewport.Width / 2.0f, viewport.Height / 2.0f, 0.0f);
+			Vector3 drawPos;// = Vector3.Transform(new Vector3(worldPos, 0.0f), viewMatrix);
+							Matrix projection = //Matrix.CreateOrthographic(viewport.Width, viewport.Height, 0.0f, 100000.0f);
+							Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45.0f),
+							aspectRatio,
+							1.0f, farplane);
+							//Matrix VP = viewMatrix * projection;
+							////Matrix 
+							//drawPos = Vector3. Transform(worldPos, VP);
+							//return new Vector2(drawPos.X * viewport.Size.X / 2, -drawPos.Y * viewport.Size.Y / 2) + screenOrigin;
+			drawPos = test.Project(worldPos, projection, viewMatrix, Matrix.Identity);
+			drawPos /= drawPos.Z;
+			return new Vector2(drawPos.X, drawPos.Y);
 		}
 
 		public Vector2 getWorldPos(Vector2 drawPos)
 		{
+			Viewport test = new Viewport(viewport);
+			Vector3 worldPos = test.Unproject(new Vector3(drawPos, height/farplane), projection, viewMatrix, Matrix.Identity);
+			//Vector2 tmp = drawPos;
+			//tmp -= screenOrigin;
+			//tmp /= screenOrigin;
+
+			//Matrix VP = (viewMatrix*projection);
+			//Matrix VPi = Matrix.Invert(VP);
+			//Matrix Pi = Matrix.Invert(projection);
+			//Matrix Vi = Matrix.Invert(viewMatrix);
+
+			//Vector3 worldPos = new Vector3(tmp, -height);
+			//worldPos = Vector3.Transform(worldPos, Pi);
+			//worldPos = Vector3.Transform(worldPos, Vi);
+			return new Vector2(worldPos.X, worldPos.Y);
 			Vector2 position = this.position;
 			position.Y *= -1.0f;
 			return drawPos / zoom + position;

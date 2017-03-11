@@ -322,7 +322,7 @@ namespace straat.Model.Map
 		/// </summary>
 		/// <param name="threshold">Threshold [0,1].</param>
 		/// <param name="factor">Factor [0,1].</param>
-		public void smoothenMinima(float threshold, float factor) // todo: full rewrite
+		public void smoothenMinima(float threshold, float factor)
 		{
 			foreach(Center c in map.centers.Values)
 			{

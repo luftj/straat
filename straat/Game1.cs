@@ -48,7 +48,6 @@ namespace straat
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
             InputHandler = new Input();
 			screenManager = new ScreenManager(this, graphics.GraphicsDevice.Viewport.Bounds);
 			screenManager.activateScreen(new MainMenuScreen(screenManager,screenManager.maxBounds));

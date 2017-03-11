@@ -16,7 +16,8 @@ namespace straat.View.Drawing
 			ASPECT,
 			HILL,
 
-			NUM_SHADINGTYPES
+			NUM_SHADINGTYPES,
+			NONE
 		}
 
 		Map map;
@@ -39,7 +40,7 @@ namespace straat.View.Drawing
 		{
 			this.map = map;
 
-			shadingStyle = SHADING.TOPOGRAPHIC;
+			shadingStyle = SHADING.NONE;
 		}
 
 		public void Draw(straat.View.Camera cam)
@@ -61,23 +62,25 @@ namespace straat.View.Drawing
 				switch(shadingStyle)
 				{
 				case SHADING.ASPECT:
-					Color colAspect = aspectBasedShading( c.aspect );
-					GeometryDrawer.fillTriangleGradient( A, B, C, colAspect, colAspect, colAspect );
+					Color colAspect = aspectBasedShading(c.aspect);
+					GeometryDrawer.fillTriangleGradient(A, B, C, colAspect, colAspect, colAspect);
 					break;
 				case SHADING.DIFFUSE:
-					Color colDiff = diffuseReflection( c.surfaceNormal );
-					GeometryDrawer.fillTriangleGradient( A, B, C, colDiff, colDiff, colDiff );
+					Color colDiff = diffuseReflection(c.surfaceNormal);
+					GeometryDrawer.fillTriangleGradient(A, B, C, colDiff, colDiff, colDiff);
 					break;
 				case SHADING.HILL:
-					Color colHill = hillShading( c );
-					GeometryDrawer.fillTriangleGradient( A, B, C, colHill, colHill, colHill );
+					Color colHill = hillShading(c);
+					GeometryDrawer.fillTriangleGradient(A, B, C, colHill, colHill, colHill);
 					break;
 				default:
 				case SHADING.TOPOGRAPHIC:
-					Color Ac = elevationColourMap( c.touches.ElementAt( 0 ).elevation );
-					Color Bc = elevationColourMap( c.touches.ElementAt( 1 ).elevation );
-					Color Cc = elevationColourMap( c.touches.ElementAt( 2 ).elevation );
-					GeometryDrawer.fillTriangleGradient( A, B, C, Ac, Bc, Cc );
+					Color Ac = elevationColourMap(c.touches.ElementAt(0).elevation);
+					Color Bc = elevationColourMap(c.touches.ElementAt(1).elevation);
+					Color Cc = elevationColourMap(c.touches.ElementAt(2).elevation);
+					GeometryDrawer.fillTriangleGradient(A, B, C, Ac, Bc, Cc);
+					break;
+				case SHADING.NONE:
 					break;
 				}
 

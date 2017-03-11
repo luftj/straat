@@ -73,6 +73,7 @@
     <Compile Include="Model\Map\Pathfinder.cs" />
     <Compile Include="View\Drawing\SceneRenderer.cs" />
     <Compile Include="Model\Map\River.cs" />
+    <Compile Include="View\Screen\DropdownMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="OpenTK">

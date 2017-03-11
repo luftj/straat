@@ -22,12 +22,19 @@ namespace straat.Model.Entities
         public GraphicsComponent gc { get; private set; }
 		public SelectableComponent sc { get; }
 
-		public Vector2 worldPos { get; private set;}
+		public Vector2 worldPos { get { 
+				return new Vector2(position.X, position.Y);
+			} private set{
+				position.X = value.X;
+				position.Y = value.Y;
+			}}
+
+		public Vector3 position;
 
 		public int id { get; private set;}
 		private static int idCounter = 1234;
 
-		float speed = 2.0f; // in m/s
+		float speed = 200.0f; // in m/s
 
 		string faction;
 
@@ -35,9 +42,9 @@ namespace straat.Model.Entities
 		public Order standingOrder;
 		List<Site> movementPath;
 
-        public Entity()
+		public Entity(Vector3 position)
         {
-            worldPos = Vector2.Zero;
+			this.position = position;
 
 			id = idCounter;
 			++idCounter;
@@ -45,7 +52,7 @@ namespace straat.Model.Entities
 			standingOrder = new Order(OrderType.NONE);
         } 
 
-		public Entity( GraphicsComponent gc, SelectableComponent sc ) : this()
+		public Entity( GraphicsComponent gc, SelectableComponent sc ,Vector3 position) : this(position)
 		{
 			this.gc = gc;
 			this.sc = sc;

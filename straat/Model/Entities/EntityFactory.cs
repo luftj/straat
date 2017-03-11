@@ -3,6 +3,7 @@ using straat.Model;
 using Microsoft.Xna.Framework.Graphics;
 using straat.View.Drawing;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework;
 
 namespace straat.Model.Entities
 {
@@ -26,9 +27,9 @@ namespace straat.Model.Entities
 			unitTex = Content.Load<Texture2D>( "unit" );
 		}
 
-		public Entity createTestEntity()
+		public Entity createTestEntity(Vector3 position)
 		{
-			Entity tmp = new Entity(new GraphicsComponent(), new SelectableComponent());
+			Entity tmp = new Entity(new GraphicsComponent(), new SelectableComponent(),position);
 			tmp.gc.texture = unitTex;
 			return tmp;
 		}

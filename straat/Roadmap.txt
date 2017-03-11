@@ -20,26 +20,32 @@ Architecture
 - delaunay traversal for faster lookup of regions
 - only update when there is something to update (various occasions)
 - localisation support
+- saving/loading map/game to/from disk
 
 Map-Gen
 -------
-- reimplement terrain smoothing
 - settlement interest fxn
 - road network connection
 - settlement growth scenario
 - interpolate and smoothen roads/rivers with splines
+- Naming
+-- Rivers
+-- Roads
+-- Cities
+-- Characters
 
 
 Graphics
 --------
 - port scene drawing to GPU completely
+-- move elevation colour mapping to shader
 - fix error with vertical river/road surfaces
 - terrain mesh smoothing/surface subdivision
 - terrain mesh self shadowing
 - sort vertices -> enable culling
 - texture support
+- fancy city rendering
 - daylight/sun
-- raytracing for mouse interaction etc
 
 
 Simulation
@@ -53,16 +59,8 @@ UI
 --
 - camera control (cap zoom, smoothen movement, rotation?)
 - simulation speed control
-- RMB context menu
 - FFF system conversion
-
-
-Naming
-------
-- Rivers
-- Roads
-- Cities
-- Characters
+- raytracing to mesh for 3D mouse interaction etc
 
 
 Version History
@@ -71,11 +69,19 @@ Version History
 v0.0
 ----
 - 3d shading (diffuse)
-
+- RMB context menu
+- GPU rendering
+-- render cities
+-- make entities visible in 3d
 
 
 Milestones
 =======
+
+v0.7
+----
+gameplay mechanics complete
+control and UI complete (not necessarily all graphics)
 
 v0.8 - Alpha
 ------------

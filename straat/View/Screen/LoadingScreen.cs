@@ -69,7 +69,7 @@ namespace straat.View.Screen
 			cam.position3f -= new Vector3(dimension / 2.0f, -dimension / 2.0f, 0.0f); // -Y for inverted camera of 2D drawing
 			cam.position3f.X -= viewport.Width / 2.0f;
 
-			mapBuilder = new MapBuilder( dimension, 16388, 2560.0f, seed );
+			mapBuilder = new MapBuilder( dimension, 8194, 2560.0f, seed );
 			status += statusstep;
 
 			statusmsg+="generating Voronoi graph...\n";
@@ -115,7 +115,6 @@ namespace straat.View.Screen
 			statusmsg += "raising sea level...\n";
 			mapBuilder.raiseElevation( -0.3f );
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
-			//mapBuilder.normaliseElevation();
 			status+=statusstep;
 
 			statusmsg+="normalising Elevation...\n";
@@ -129,18 +128,18 @@ namespace straat.View.Screen
 			MapDrawer.scaleElevation(mapBuilder.maxElevation);
 			status += statusstep;
 
-			mapDrawer.drawRivers = false;
-			statusmsg+="drawing rivers...\n";
-			mapBuilder.applyRivers();
-			mapDrawer.drawRivers = true;
-			status += statusstep;
+			//mapDrawer.drawRivers = false;
+			//statusmsg+="drawing rivers...\n";
+			//mapBuilder.applyRivers();
+			//mapDrawer.drawRivers = true;
+			//status += statusstep;
 
 
-			mapDrawer.drawCities = false;
-			statusmsg+="populating cities...\n";
-			mapBuilder.generateCities();
-			mapDrawer.drawCities = true;
-			status += statusstep;
+			//mapDrawer.drawCities = false;
+			//statusmsg+="populating cities...\n";
+			//mapBuilder.generateCities();
+			//mapDrawer.drawCities = true;
+			//status += statusstep;
 
 
 			status = 1.0f;
