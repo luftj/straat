@@ -189,7 +189,7 @@ namespace straat.Model.Map
 			{
 				float length = ( c.position.Length() );
 				float factor = length/(dimensions/2);
-				c.elevation = 1-(max * factor); // todo: respect maxElevation
+				c.elevation = 1-(max * factor);
 			}
 			maxElevation = max;
 		}
