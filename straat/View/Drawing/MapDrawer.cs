@@ -40,8 +40,8 @@ namespace straat.View.Drawing
 		{
 			this.map = map;
             
-			shadingStyle = SHADING.NONE;
-			//shadingStyle = SHADING.TOPOGRAPHIC;
+			//shadingStyle = SHADING.NONE;
+			shadingStyle = SHADING.TOPOGRAPHIC;
 		}
 
 		public void Draw(straat.View.Camera cam)
